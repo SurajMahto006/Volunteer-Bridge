@@ -32,9 +32,26 @@
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
     .section-title { font-size:17px; font-weight:600; margin-bottom:16px; }
     .needs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-bottom:36px; }
-    .need-card { background:var(--white); border:2px solid var(--border); border-radius:var(--radius); padding:20px; cursor:pointer; transition:all 0.2s; }
-    .need-card:hover { border-color:var(--purple); box-shadow:0 4px 20px rgba(124,58,237,0.1); }
-    .need-card.selected { border-color:var(--purple); background:var(--purple-lt); }
+    .need-card {
+      background:var(--white); border:2px solid var(--border);
+      border-radius:var(--radius); padding:20px; cursor:pointer;
+      transition:all 0.3s; position:relative;
+    }
+    .need-card::after {
+      content:'✓'; position:absolute; top:12px; right:12px;
+      width:24px; height:24px; border-radius:50%;
+      background:var(--purple); color:white;
+      display:flex; align-items:center; justify-content:center;
+      font-size:14px; font-weight:700;
+      opacity:0; transform:scale(0);
+      transition:all 0.3s;
+    }
+    .need-card:hover { border-color:var(--purple); box-shadow:0 4px 20px rgba(124,58,237,0.1); transform:translateY(-4px); }
+    .need-card.selected {
+      border-color:var(--purple); background:var(--purple-lt);
+      box-shadow:0 8px 24px rgba(124,58,237,0.2);
+    }
+    .need-card.selected::after { opacity:1; transform:scale(1); }
     .need-card-title { font-weight:600; font-size:15px; margin-bottom:8px; }
     .need-card-meta  { font-size:13px; color:var(--muted); display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
     .need-card-desc  { font-size:13px; color:var(--muted); }
@@ -54,10 +71,36 @@
     .result-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; margin-bottom:20px; }
     .result-header { background:var(--purple); color:white; padding:18px 24px; font-size:16px; font-weight:600; }
     .result-body { padding:24px; }
-    .match-item { border:1px solid var(--border); border-radius:10px; padding:18px 20px; margin-bottom:16px; background:var(--bg); }
+    .match-item {
+      border:1px solid var(--border); border-radius:10px;
+      padding:18px 20px; margin-bottom:16px; background:var(--bg);
+      transition:all 0.3s; position:relative; overflow:hidden;
+      opacity:0; animation:slideIn 0.4s ease-out forwards;
+    }
+    .match-item:nth-child(1) { animation-delay:0.1s; }
+    .match-item:nth-child(2) { animation-delay:0.2s; }
+    .match-item:nth-child(3) { animation-delay:0.3s; }
+    @keyframes slideIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .match-item::before {
+      content:''; position:absolute; left:0; top:0; bottom:0;
+      width:4px; background:var(--purple); transform:scaleY(0);
+      transition:transform 0.3s;
+    }
+    .match-item:hover::before { transform:scaleY(1); }
+    .match-item:hover {
+      transform:translateX(8px);
+      box-shadow:0 8px 24px rgba(124,58,237,0.15);
+    }
     .match-item:last-child { margin-bottom:0; }
     .match-top { display:flex; align-items:center; margin-bottom:10px; }
-    .match-rank { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:var(--purple); color:white; font-size:13px; font-weight:600; margin-right:10px; flex-shrink:0; }
+    .match-rank {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:28px; height:28px; border-radius:50%;
+      background:var(--purple); color:white;
+      font-size:13px; font-weight:600; margin-right:10px;
+      flex-shrink:0; position:relative; z-index:1;
+      box-shadow:0 4px 12px rgba(124,58,237,0.3);
+    }
     .match-name { font-size:16px; font-weight:600; }
     .match-location { font-size:13px; color:var(--muted); margin-left:auto; }
     .match-skills { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
