@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NGO Panel — VolunteerBridge</title>
+
+  <!-- Google Font: Clean and professional -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ── RESET & BASE ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:     #1a8a5a;
+      --green-lt:  #e8f7f0;
+      --green-dk:  #116640;
+      --red:       #d94040;
+      --red-lt:    #fdeaea;
+      --amber:     #d97b00;
+      --amber-lt:  #fff4e0;
+      --text:      #1a1a1a;
+      --muted:     #6b7280;
+      --border:    #e2e8f0;
+      --bg:        #f8fafb;
+      --white:     #ffffff;
+      --radius:    12px;
+      --shadow:    0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-brand {
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--green);
+      text-decoration: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 14px;
+      margin-left: 24px;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a.active { color: var(--green); font-weight: 500; }
+
+    /* ── PAGE LAYOUT ── */
+    .page {
+      max-width: 760px;
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .page-header p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 36px;
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 7px;
+      color: var(--text);
+    }
+
+    label span.required {
+      color: var(--red);
+      margin-left: 2px;
+    }
+
+    label .hint {
+      font-weight: 400;
+      color: var(--muted);
+      font-size: 13px;
+      margin-left: 6px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(26,138,90,0.12);
+    }
+
+    textarea { resize: vertical; min-height: 100px; }
+
+    /* ── TWO COLUMN ROW ── */
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* ── URGENCY SELECTOR (custom radio buttons) ── */
+    .urgency-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .urgency-option input { display: none; }
+
+    .urgency-option label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 20px;
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .urgency-option input:checked + label.low {
+      background: var(--green-lt);
+      border-color: var(--green);
+      color: var(--green-dk);
+    }
+
+    .urgency-option input:checked + label.medium {
+      background: var(--amber-lt);
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .urgency-option input:checked + label.high {
+      background: var(--red-lt);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .urgency-option label:hover {
+      border-color: #aaa;
+      color: var(--text);
+    }
+
+    /* ── SUBMIT BUTTON ── */
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 8px;
+    }
+
+    .btn-submit:hover  { background: var(--green-dk); }
+    .btn-submit:active { transform: scale(0.99); }
+    .btn-submit:disabled { background: #aaa; cursor: not-allowed; }
+
+    /* ── TOAST NOTIFICATION ── */
+    #toast {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      background: var(--text);
+      color: white;
+      padding: 14px 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #toast.success { background: var(--green); }
+    #toast.error   { background: var(--red); }
+
+    /* ── RECENT ENTRIES TABLE ── */
+    .section-title {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 40px 0 16px;
+    }
+
+    .entries-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .entries-table th {
+      text-align: left;
+      padding: 10px 14px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .entries-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-high   { background: var(--red-lt);   color: var(--red);   }
+    .badge-medium { background: var(--amber-lt);  color: var(--amber); }
+    .badge-low    { background: var(--green-lt);  color: var(--green-dk); }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* ── LOADING SPINNER ── */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 560px) {
+      .row-2 { grid-template-columns: 1fr; }
+      .card  { padding: 24px; }
+      .urgency-group { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a class="nav-brand" href="index.html">VolunteerBridge</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="ngo.html" class="active">NGO Panel</a>
+      <a href="volunteer.html">Register as Volunteer</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="match.html">Smart Match</a>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div class="page">
+
+    <div class="page-header">
+      <h1>Report a Community Need</h1>
+      <p>Fill in the details below to log a new community problem. It will appear on the dashboard instantly.</p>
+    </div>
+
+    <!-- FORM CARD -->
+    <div class="card">
+      <form id="needForm">
+
+        <!-- Need Title -->
+        <div class="form-group">
+          <label for="title">
+            Need title <span class="required">*</span>
+            <span class="hint">Short, clear description</span>
+          </label>
+          <input
+            type="text"
+            id="title"
+            placeholder="e.g. Food shortage in Ambarnath East"
+            required
+          />
+        </div>
+
+        <!-- Category + Location (two columns) -->
+        <div class="row-2">
+          <div class="form-group">
+            <label for="category">Category <span class="required">*</span></label>
+            <select id="category" required>
+              <option value="" disabled selected>Select a category</option>
+              <option value="Food">Food &amp; Nutrition</option>
+              <option value="Medical">Medical &amp; Health</option>
+              <option value="Education">Education</option>
+              <option value="Shelter">Shelter &amp; Housing</option>
+              <option value="Water">Water &amp; Sanitation</option>
+              <option value="Livelihood">Livelihood &amp; Jobs</option>
+              <option value="Disaster">Disaster Relief</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="location">Location <span class="required">*</span></label>
+            <input
+              type="text"
+              id="location"
+              placeholder="e.g. Ambarnath East, Maharashtra"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- People Affected + NGO Name (two columns) -->
+        <div class="row-2">
+          <div class="form-group">
+            <label for="affected">
+              People affected
+              <span class="hint">(approx. number)</span>
+            </label>
+            <input
+              type="number"
+              id="affected"
+              placeholder="e.g. 200"
+              min="1"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="ngoName">Your NGO / Group name <span class="required">*</span></label>
+            <input
+              type="text"
+              id="ngoName"
+              placeholder="e.g. Sahyog Foundation"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="description">
+            Description
+            <span class="hint">What exactly is happening? What is needed?</span>
+          </label>
+          <textarea
+            id="description"
+            placeholder="Describe the situation in detail. What resources or volunteers are needed?"
+          ></textarea>
+        </div>
+
+        <!-- Urgency -->
+        <div class="form-group">
+          <label>Urgency level <span class="required">*</span></label>
+          <div class="urgency-group">
+            <div class="urgency-option">
+              <input type="radio" name="urgency" id="u-low" value="low"/>
+              <label for="u-low" class="low">Low</label>
+            </div>
+            <div class="urgency-option">
+              <input type="radio" name="urgency" id="u-medium" value="medium" checked/>
+              <label for="u-medium" class="medium">Medium</label>
+            </div>
+            <div class="urgency-option">
+              <input type="radio" name="urgency" id="u-high" value="high"/>
+              <label for="u-high" class="high">High</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button class="btn-submit" type="submit" id="submitBtn">
+          Submit Community Need
+        </button>
+
+      </form>
+    </div>
+
+    <!-- RECENT ENTRIES -->
+    <h2 class="section-title">Recently Added Needs</h2>
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div id="entriesContainer">
+        <div class="empty-state">Loading entries...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast"></div>
+
+  <!-- ══════════════════════════════════════════
+       FIREBASE SETUP
+       Replace the config below with YOUR own
+       Firebase project config (free to create at
+       https://console.firebase.google.com)
+  ══════════════════════════════════════════ -->
+  <script type="module">
+
+    // ── Step 1: Import Firebase tools we need ──
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      orderBy,
+      query,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // ── Step 2: YOUR Firebase config (replace this!) ──
+    // Go to https://console.firebase.google.com
+    // Create project → Add web app → Copy config here
+    const firebaseConfig = {
+    apiKey: "AIzaSyBmMZdC9WgVCnXAQb6Jvx_n_JmEHE3z2U8",
+    authDomain: "volunteerbridge-5a97c.firebaseapp.com",
+    projectId: "volunteerbridge-5a97c",
+    storageBucket: "volunteerbridge-5a97c.firebasestorage.app",
+    messagingSenderId: "510303137686",
+    appId: "1:510303137686:web:00b136908afa7b48a477b7"
+    };
+
+    // ── Step 3: Start Firebase ──
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    // ── Step 4: Helper — show toast notification ──
+    function showToast(msg, type = "success") {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.className   = `show ${type}`;
+      setTimeout(() => { toast.className = ""; }, 3500);
+    }
+
+    // ── Step 5: Load existing entries from Firestore ──
+    async function loadEntries() {
+      const container = document.getElementById("entriesContainer");
+      try {
+        // Query the "needs" collection, newest first
+        const q    = query(collection(db, "needs"), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+          container.innerHTML = `<div class="empty-state">No needs reported yet. Be the first!</div>`;
+          return;
+        }
+
+        // Build the table
+        let rows = "";
+        snap.forEach(doc => {
+          const d = doc.data();
+          rows += `
+            <tr>
+              <td>${d.title}</td>
+              <td>${d.category}</td>
+              <td>${d.location}</td>
+              <td>
+                <span class="badge badge-${d.urgency}">
+                  ${d.urgency.charAt(0).toUpperCase() + d.urgency.slice(1)}
+                </span>
+              </td>
+              <td>${d.ngoName}</td>
+            </tr>`;
+        });
+
+        container.innerHTML = `
+          <table class="entries-table">
+            <thead>
+              <tr>
+                <th>Need</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Urgency</th>
+                <th>NGO</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>`;
+
+      } catch (err) {
+        container.innerHTML = `<div class="empty-state">Could not load entries. Check Firebase config.</div>`;
+        console.error(err);
+      }
+    }
+
+    // ── Step 6: Handle form submission ──
+    document.getElementById("needForm").addEventListener("submit", async (e) => {
+      e.preventDefault(); // Stop page from reloading
+
+      const btn = document.getElementById("submitBtn");
+
+      // Read all form values
+      const title       = document.getElementById("title").value.trim();
+      const category    = document.getElementById("category").value;
+      const location    = document.getElementById("location").value.trim();
+      const affected    = document.getElementById("affected").value;
+      const ngoName     = document.getElementById("ngoName").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const urgency     = document.querySelector('input[name="urgency"]:checked').value;
+
+      // Show loading state on button
+      btn.disabled   = true;
+      btn.innerHTML  = `<span class="spinner"></span> Saving...`;
+
+      try {
+        // Save to Firestore — "needs" is the collection name
+        await addDoc(collection(db, "needs"), {
+          title,
+          category,
+          location,
+          affected:    affected ? Number(affected) : null,
+          ngoName,
+          description,
+          urgency,
+          createdAt:   serverTimestamp() // Firebase adds the timestamp
+        });
+
+        // Success!
+        showToast("Need reported successfully!");
+        e.target.reset(); // Clear the form
+        document.getElementById("u-medium").checked = true; // Reset urgency to Medium
+        loadEntries(); // Refresh the table
+
+      } catch (err) {
+        showToast("Error saving. Check your Firebase config.", "error");
+        console.error(err);
+      } finally {
+        // Restore button
+        btn.disabled  = false;
+        btn.innerHTML = "Submit Community Need";
+      }
+    });
+
+    // ── Step 7: Load entries when page opens ──
+    loadEntries();
+
+  </script>
+
+</body>
+</html>

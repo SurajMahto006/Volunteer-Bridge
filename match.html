@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Match — VolunteerBridge</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green:#1a8a5a; --green-lt:#e8f7f0; --green-dk:#116640;
+      --red:#d94040; --red-lt:#fdeaea;
+      --amber:#d97b00; --amber-lt:#fff4e0;
+      --blue:#2563eb; --blue-lt:#eff6ff;
+      --purple:#7c3aed; --purple-lt:#f3f0ff;
+      --text:#1a1a1a; --muted:#6b7280;
+      --border:#e2e8f0; --bg:#f8fafb; --white:#ffffff;
+      --radius:12px; --shadow:0 2px 12px rgba(0,0,0,0.08);
+    }
+    body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+    nav { background:var(--white); border-bottom:1px solid var(--border); padding:0 32px; height:60px; display:flex; align-items:center; justify-content:space-between; }
+    .nav-brand { font-weight:600; font-size:18px; color:var(--green); text-decoration:none; }
+    .nav-links a { text-decoration:none; color:var(--muted); font-size:14px; margin-left:24px; transition:color 0.2s; }
+    .nav-links a:hover { color:var(--text); }
+    .nav-links a.active { color:var(--green); font-weight:500; }
+    .page { max-width:900px; margin:48px auto; padding:0 24px; }
+    .page-header { margin-bottom:32px; }
+    .page-header h1 { font-size:26px; font-weight:600; margin-bottom:6px; }
+    .page-header p  { color:var(--muted); font-size:15px; }
+    .ai-badge { display:inline-flex; align-items:center; gap:6px; background:var(--purple-lt); color:var(--purple); border-radius:999px; padding:4px 14px; font-size:13px; font-weight:600; margin-bottom:20px; }
+    .ai-dot { width:8px; height:8px; background:var(--purple); border-radius:50%; animation:pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+    .section-title { font-size:17px; font-weight:600; margin-bottom:16px; }
+    .needs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-bottom:36px; }
+    .need-card { background:var(--white); border:2px solid var(--border); border-radius:var(--radius); padding:20px; cursor:pointer; transition:all 0.2s; }
+    .need-card:hover { border-color:var(--purple); box-shadow:0 4px 20px rgba(124,58,237,0.1); }
+    .need-card.selected { border-color:var(--purple); background:var(--purple-lt); }
+    .need-card-title { font-weight:600; font-size:15px; margin-bottom:8px; }
+    .need-card-meta  { font-size:13px; color:var(--muted); display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px; }
+    .need-card-desc  { font-size:13px; color:var(--muted); }
+    .badge { display:inline-block; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:600; }
+    .badge-high   { background:var(--red-lt);   color:var(--red);      }
+    .badge-medium { background:var(--amber-lt);  color:var(--amber);    }
+    .badge-low    { background:var(--green-lt);  color:var(--green-dk); }
+    .badge-cat    { background:var(--blue-lt);   color:var(--blue);     }
+    .match-section { margin-bottom:36px; }
+    .selected-info { background:var(--purple-lt); border:1px solid #c4b5fd; border-radius:8px; padding:14px 18px; font-size:14px; color:var(--purple); margin-bottom:16px; display:none; }
+    .selected-info.show { display:block; }
+    .btn-match { width:100%; padding:16px; background:var(--purple); color:white; border:none; border-radius:8px; font-family:'DM Sans',sans-serif; font-size:16px; font-weight:600; cursor:pointer; transition:background 0.2s; }
+    .btn-match:hover { background:#6d28d9; }
+    .btn-match:disabled { background:#aaa; cursor:not-allowed; }
+    #resultArea { display:none; }
+    #resultArea.show { display:block; }
+    .result-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; margin-bottom:20px; }
+    .result-header { background:var(--purple); color:white; padding:18px 24px; font-size:16px; font-weight:600; }
+    .result-body { padding:24px; }
+    .match-item { border:1px solid var(--border); border-radius:10px; padding:18px 20px; margin-bottom:16px; background:var(--bg); }
+    .match-item:last-child { margin-bottom:0; }
+    .match-top { display:flex; align-items:center; margin-bottom:10px; }
+    .match-rank { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:50%; background:var(--purple); color:white; font-size:13px; font-weight:600; margin-right:10px; flex-shrink:0; }
+    .match-name { font-size:16px; font-weight:600; }
+    .match-location { font-size:13px; color:var(--muted); margin-left:auto; }
+    .match-skills { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+    .skill-pill { background:var(--green-lt); color:var(--green-dk); border-radius:999px; padding:3px 10px; font-size:12px; font-weight:500; }
+    .avail-pill { background:var(--blue-lt); color:var(--blue); border-radius:999px; padding:3px 10px; font-size:12px; font-weight:500; }
+    .match-reason { font-size:14px; color:var(--text); line-height:1.6; padding-top:10px; border-top:1px solid var(--border); }
+    .match-reason strong { color:var(--purple); }
+    .loading-box { text-align:center; padding:48px 24px; color:var(--muted); font-size:15px; }
+    .loading-spinner { width:40px; height:40px; border:3px solid var(--purple-lt); border-top-color:var(--purple); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 16px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .empty-state { text-align:center; padding:40px 0; color:var(--muted); font-size:14px; }
+    .debug-box { background:#fff8f8; border:1px solid #fca5a5; border-radius:8px; padding:16px; margin-top:12px; font-size:13px; color:#991b1b; line-height:1.8; text-align:left; }
+    @media (max-width:560px) { .needs-grid { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="index.html">VolunteerBridge</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="ngo.html">NGO Panel</a>
+    <a href="volunteer.html">Register as Volunteer</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="match.html" class="active">Smart Match</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <div class="ai-badge"><span class="ai-dot"></span> AI-powered matching</div>
+    <h1>Smart Volunteer Matching</h1>
+    <p>Select a community need. Our AI will find the best volunteers based on skills, location, and availability.</p>
+  </div>
+
+  <div class="section-title">Step 1 — Select a community need</div>
+  <div id="needsGrid" class="needs-grid">
+    <div class="empty-state" style="grid-column:1/-1">Loading needs...</div>
+  </div>
+
+  <div class="match-section">
+    <div class="section-title">Step 2 — Run AI matching</div>
+    <div id="selectedInfo" class="selected-info">
+      Selected: <strong id="selectedTitle">—</strong>
+    </div>
+    <button class="btn-match" id="matchBtn" onclick="runMatch()" disabled>
+      Find Best Volunteers with AI
+    </button>
+  </div>
+
+  <div id="resultArea">
+    <div class="section-title">Step 3 — AI Recommendations</div>
+    <div class="result-card">
+      <div class="result-header" id="resultHeader">Matching results</div>
+      <div class="result-body" id="resultBody"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, orderBy, query }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // ── FIREBASE CONFIG ──
+  const firebaseConfig = {
+    apiKey:            "AIzaSyBmMZdC9WgVCnXAQb6Jvx_n_JmEHE3z2U8",
+    authDomain:        "volunteerbridge-5a97c.firebaseapp.com",
+    projectId:         "volunteerbridge-5a97c",
+    storageBucket:     "volunteerbridge-5a97c.firebasestorage.app",
+    messagingSenderId: "510303137686",
+    appId:             "1:510303137686:web:00b136908afa7b48a477b7"
+  };
+
+  // ── GEMINI API KEY ──
+  const GEMINI_KEY = "AIzaSyCbFAIA678ZQkXFBnlsZPq4jfH1pdmre1Q";
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  let allNeeds      = [];
+  let allVolunteers = [];
+  let selectedNeed  = null;
+
+  // ── LOAD FIREBASE DATA ──
+  async function loadData() {
+    try {
+      const needsSnap = await getDocs(
+        query(collection(db, "needs"), orderBy("createdAt", "desc"))
+      );
+      allNeeds = [];
+      needsSnap.forEach(doc => allNeeds.push({ id: doc.id, ...doc.data() }));
+
+      const volSnap = await getDocs(collection(db, "volunteers"));
+      allVolunteers = [];
+      volSnap.forEach(doc => allVolunteers.push({ id: doc.id, ...doc.data() }));
+
+      renderNeedsGrid();
+    } catch (err) {
+      document.getElementById("needsGrid").innerHTML =
+        `<div class="empty-state" style="grid-column:1/-1">Could not load data: ${err.message}</div>`;
+      console.error("Firebase load error:", err);
+    }
+  }
+
+  // ── RENDER NEED CARDS ──
+  function renderNeedsGrid() {
+    const grid = document.getElementById("needsGrid");
+    if (allNeeds.length === 0) {
+      grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+        No needs found. Add from <a href="ngo.html">NGO Panel</a>.
+      </div>`;
+      return;
+    }
+    const order = { high:0, medium:1, low:2 };
+    const sorted = [...allNeeds].sort((a,b) => (order[a.urgency]??3)-(order[b.urgency]??3));
+    grid.innerHTML = sorted.map(n => `
+      <div class="need-card" id="card-${n.id}" onclick="selectNeed('${n.id}')">
+        <div class="need-card-title">${n.title}</div>
+        <div class="need-card-meta">
+          <span class="badge badge-${n.urgency}">${cap(n.urgency)}</span>
+          <span class="badge badge-cat">${n.category || "Other"}</span>
+        </div>
+        <div class="need-card-desc">${n.location}${n.affected ? " · ~"+n.affected+" people":""}</div>
+      </div>
+    `).join("");
+  }
+
+  // ── SELECT A NEED ──
+  window.selectNeed = function(id) {
+    document.querySelectorAll(".need-card").forEach(c => c.classList.remove("selected"));
+    document.getElementById("card-"+id).classList.add("selected");
+    selectedNeed = allNeeds.find(n => n.id === id);
+    document.getElementById("selectedTitle").textContent = selectedNeed.title;
+    document.getElementById("selectedInfo").classList.add("show");
+    document.getElementById("matchBtn").disabled = false;
+    document.getElementById("resultArea").classList.remove("show");
+  };
+
+  // ── RUN AI MATCHING ──
+window.runMatch = async function() {
+  if (!selectedNeed) return;
+
+  if (allVolunteers.length === 0) {
+    showError("No volunteers registered yet! Please add volunteers first.");
+    return;
+  }
+
+  const btn = document.getElementById("matchBtn");
+  btn.disabled = true;
+  btn.textContent = "AI is thinking...";
+
+  document.getElementById("resultArea").classList.add("show");
+  document.getElementById("resultHeader").textContent = "Finding best matches...";
+  document.getElementById("resultBody").innerHTML = `
+    <div class="loading-box">
+      <div class="loading-spinner"></div>
+      Smart AI is analysing ${allVolunteers.length} volunteer(s)...
+    </div>`;
+
+  const volList = allVolunteers.map((v, i) =>
+    `V${i+1}: Name="${v.name}", Location="${v.location}", Skills="${(v.skills||[]).join(", ")}", Availability="${(v.availability||[]).join(", ")}"`
+  ).join("\n");
+
+  const topN = Math.min(3, allVolunteers.length);
+
+  const prompt = `You are a volunteer coordinator AI.
+
+COMMUNITY NEED:
+Title: ${selectedNeed.title}
+Category: ${selectedNeed.category}
+Location: ${selectedNeed.location}
+Urgency: ${selectedNeed.urgency}
+Description: ${selectedNeed.description || "Not provided"}
+
+AVAILABLE VOLUNTEERS:
+${volList}
+
+Return ONLY a valid JSON array of the top ${topN} best-matched volunteers.`;
+
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.2, maxOutputTokens: 800 }
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data?.error?.message || "API error");
+    }
+
+    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    const clean = rawText.replace(/```json|```/g, "").trim();
+
+    const matches = JSON.parse(clean);
+
+    renderMatches(matches);
+
+  } catch (err) {
+    console.warn("⚠️ AI failed, switching to fallback...", err.message);
+
+    // 🔥 SMART FALLBACK SYSTEM
+    const fallbackMatches = allVolunteers
+  .map(v => {
+    let score = 0;
+
+    // Location match — partial match counts
+    const vLoc   = (v.location || "").toLowerCase();
+    const nLoc   = (selectedNeed.location || "").toLowerCase();
+    if (vLoc.includes(nLoc) || nLoc.includes(vLoc)) score += 5;
+
+    // Skill match — check against title + category + description
+    const needText = [
+      selectedNeed.title,
+      selectedNeed.category,
+      selectedNeed.description
+    ].join(" ").toLowerCase();
+
+    (v.skills || []).forEach(skill => {
+      if (needText.includes(skill.toLowerCase())) score += 2;
+    });
+
+    // Availability bonus
+    if ((v.availability || []).length > 0) score += 1;
+
+    // Experience bonus for high urgency needs
+    if (selectedNeed.urgency === "high" && (v.experience || 0) >= 2) score += 2;
+
+    return { ...v, score };
+  })
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 3)
+  .map((v, i) => ({
+    rank: i + 1,
+    name: v.name,
+    location: v.location,
+    skills: v.skills || [],
+    availability: v.availability || [],
+    reason: `Score: ${v.score} — matched on location, skills alignment with "${selectedNeed.category}" category, and availability.`
+  }));
+
+    // 🎯 Show fallback results (NO ERROR SCREEN)
+    document.getElementById("resultHeader").textContent =
+      "Top Matches (Smart Algorithm Mode)";
+
+    renderMatches(fallbackMatches);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Find Best Volunteers with AI";
+  }
+};
+
+  // ── RENDER RESULTS ──
+  function renderMatches(matches) {
+    document.getElementById("resultHeader").textContent =
+      `Top ${matches.length} match${matches.length!==1?"es":""} for: ${selectedNeed.title}`;
+    document.getElementById("resultBody").innerHTML = matches.map(m => `
+      <div class="match-item">
+        <div class="match-top">
+          <span class="match-rank">${m.rank}</span>
+          <span class="match-name">${m.name}</span>
+          <span class="match-location">${m.location}</span>
+        </div>
+        <div class="match-skills">
+          ${(m.skills||[]).map(s=>`<span class="skill-pill">${s}</span>`).join("")}
+          ${(m.availability||[]).map(a=>`<span class="avail-pill">${a}</span>`).join("")}
+        </div>
+        <div class="match-reason"><strong>Why this match:</strong> ${m.reason}</div>
+      </div>
+    `).join("");
+  }
+
+  // ── SHOW ERROR ──
+  function showError(msg) {
+    document.getElementById("resultArea").classList.add("show");
+    document.getElementById("resultHeader").textContent = "Matching failed";
+    document.getElementById("resultBody").innerHTML = `
+      <div class="empty-state">
+        <div class="debug-box">
+          <strong>Error:</strong> ${msg}<br/><br/>
+          <strong>Checklist:</strong><br/>
+          1. Is your Gemini API key correct? (AIza...)<br/>
+          2. Are volunteers registered? Check <a href="volunteer.html">volunteer page</a><br/>
+          3. Press F12 → Console tab for full error details
+        </div>
+      </div>`;
+  }
+
+  function cap(s) { return s ? s.charAt(0).toUpperCase()+s.slice(1) : ""; }
+
+  loadData();
+</script>
+
+</body>
+</html>

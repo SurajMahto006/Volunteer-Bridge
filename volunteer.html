@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Volunteer Register — VolunteerBridge</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:    #1a8a5a;
+      --green-lt: #e8f7f0;
+      --green-dk: #116640;
+      --red:      #d94040;
+      --red-lt:   #fdeaea;
+      --blue:     #2563eb;
+      --blue-lt:  #eff6ff;
+      --text:     #1a1a1a;
+      --muted:    #6b7280;
+      --border:   #e2e8f0;
+      --bg:       #f8fafb;
+      --white:    #ffffff;
+      --radius:   12px;
+      --shadow:   0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand { font-weight: 600; font-size: 18px; color: var(--green); text-decoration: none; }
+    .nav-links a {
+      text-decoration: none; color: var(--muted);
+      font-size: 14px; margin-left: 24px; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-links a.active { color: var(--green); font-weight: 500; }
+
+    /* ── PAGE ── */
+    .page { max-width: 760px; margin: 48px auto; padding: 0 24px; }
+
+    .page-header { margin-bottom: 32px; }
+    .page-header h1 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+    .page-header p  { color: var(--muted); font-size: 15px; }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 36px;
+    }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 24px; }
+
+    label {
+      display: block; font-size: 14px;
+      font-weight: 500; margin-bottom: 7px;
+    }
+    label span.required { color: var(--red); margin-left: 2px; }
+    label .hint { font-weight: 400; color: var(--muted); font-size: 13px; margin-left: 6px; }
+
+    input[type="text"],
+    input[type="tel"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 15px;
+      color: var(--text); background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(26,138,90,0.12);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* ── SKILLS TAG INPUT ── */
+    .skills-wrapper {
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      cursor: text;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: var(--white);
+      min-height: 48px;
+    }
+    .skills-wrapper:focus-within {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(26,138,90,0.12);
+    }
+    .skill-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--green-lt); color: var(--green-dk);
+      border-radius: 999px; padding: 4px 12px;
+      font-size: 13px; font-weight: 500;
+    }
+    .skill-tag button {
+      background: none; border: none; cursor: pointer;
+      color: var(--green-dk); font-size: 14px; line-height: 1;
+      padding: 0; margin: 0;
+    }
+    .skill-tag button:hover { color: var(--red); }
+    #skillInput {
+      border: none; outline: none; font-family: 'DM Sans', sans-serif;
+      font-size: 14px; color: var(--text); flex: 1; min-width: 120px;
+      padding: 2px 0; background: transparent;
+    }
+    .skills-hint { font-size: 12px; color: var(--muted); margin-top: 5px; }
+
+    /* ── AVAILABILITY CHECKBOXES ── */
+    .availability-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .avail-option input { display: none; }
+    .avail-option label {
+      display: block; text-align: center;
+      padding: 10px 8px; border: 1.5px solid var(--border);
+      border-radius: 8px; cursor: pointer; font-size: 13px;
+      font-weight: 500; color: var(--muted);
+      transition: all 0.2s; margin: 0;
+    }
+    .avail-option input:checked + label {
+      background: var(--blue-lt);
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+    .avail-option label:hover { border-color: #aaa; color: var(--text); }
+
+    /* ── SUBMIT ── */
+    .btn-submit {
+      width: 100%; padding: 14px;
+      background: var(--green); color: white;
+      border: none; border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s, transform 0.1s;
+      margin-top: 8px;
+    }
+    .btn-submit:hover  { background: var(--green-dk); }
+    .btn-submit:active { transform: scale(0.99); }
+    .btn-submit:disabled { background: #aaa; cursor: not-allowed; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed; bottom: 32px; right: 32px;
+      background: var(--text); color: white;
+      padding: 14px 22px; border-radius: 10px;
+      font-size: 14px; font-weight: 500;
+      opacity: 0; transform: translateY(10px);
+      transition: all 0.3s; pointer-events: none; z-index: 999;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+    #toast.success { background: var(--green); }
+    #toast.error   { background: var(--red); }
+
+    /* ── VOLUNTEERS TABLE ── */
+    .section-title { font-size: 17px; font-weight: 600; margin: 40px 0 16px; }
+
+    .vol-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .vol-table th {
+      text-align: left; padding: 10px 14px;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      font-weight: 500; color: var(--muted);
+    }
+    .vol-table td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+
+    .skill-pill {
+      display: inline-block; background: var(--green-lt);
+      color: var(--green-dk); border-radius: 999px;
+      padding: 2px 8px; font-size: 12px; font-weight: 500;
+      margin: 2px 2px 2px 0;
+    }
+
+    .empty-state { text-align: center; padding: 40px 0; color: var(--muted); font-size: 14px; }
+
+    .spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4); border-top-color: white;
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+      vertical-align: middle; margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 560px) {
+      .row-2, .row-3 { grid-template-columns: 1fr; }
+      .availability-grid { grid-template-columns: repeat(2, 1fr); }
+      .card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-brand" href="index.html">VolunteerBridge</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="ngo.html">NGO Panel</a>
+      <a href="volunteer.html" class="active">Register as Volunteer</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="match.html">Smart Match</a>
+    </div>
+  </nav>
+
+  <div class="page">
+
+    <div class="page-header">
+      <h1>Register as a Volunteer</h1>
+      <p>Tell us your skills and availability so we can match you with the right community need.</p>
+    </div>
+
+    <div class="card">
+      <form id="volunteerForm">
+
+        <!-- Name + Phone -->
+        <div class="row-2">
+          <div class="form-group">
+            <label for="volName">Full name <span class="required">*</span></label>
+            <input type="text" id="volName" placeholder="e.g. Priya Sharma" required />
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone number <span class="required">*</span></label>
+            <input type="tel" id="phone" placeholder="e.g. 9876543210" required />
+          </div>
+        </div>
+
+        <!-- Location + Experience -->
+        <div class="row-2">
+          <div class="form-group">
+            <label for="volLocation">Your area / city <span class="required">*</span></label>
+            <input type="text" id="volLocation" placeholder="e.g. Thane, Maharashtra" required />
+          </div>
+          <div class="form-group">
+            <label for="experience">Years of volunteer experience</label>
+            <input type="number" id="experience" placeholder="e.g. 2" min="0" max="50" />
+          </div>
+        </div>
+
+        <!-- Skills Tag Input -->
+        <div class="form-group">
+          <label>
+            Skills <span class="required">*</span>
+            <span class="hint">What are you good at?</span>
+          </label>
+          <div class="skills-wrapper" id="skillsWrapper" onclick="document.getElementById('skillInput').focus()">
+            <!-- Tags appear here -->
+            <input
+              type="text"
+              id="skillInput"
+              placeholder="Type a skill and press Enter (e.g. Teaching)"
+            />
+          </div>
+          <p class="skills-hint">Press Enter or comma after each skill. e.g. Teaching, Medical, Driving, Cooking</p>
+          <!-- Hidden input stores skills as comma-separated string for saving -->
+          <input type="hidden" id="skillsHidden" />
+        </div>
+
+        <!-- Availability -->
+        <div class="form-group">
+          <label>Availability <span class="hint">(select all that apply)</span></label>
+          <div class="availability-grid">
+            <div class="avail-option">
+              <input type="checkbox" id="av-weekday" value="Weekdays" />
+              <label for="av-weekday">Weekdays</label>
+            </div>
+            <div class="avail-option">
+              <input type="checkbox" id="av-weekend" value="Weekends" />
+              <label for="av-weekend">Weekends</label>
+            </div>
+            <div class="avail-option">
+              <input type="checkbox" id="av-morning" value="Mornings" />
+              <label for="av-morning">Mornings</label>
+            </div>
+            <div class="avail-option">
+              <input type="checkbox" id="av-evening" value="Evenings" />
+              <label for="av-evening">Evenings</label>
+            </div>
+            <div class="avail-option">
+              <input type="checkbox" id="av-fulltime" value="Full-time" />
+              <label for="av-fulltime">Full-time</label>
+            </div>
+            <div class="avail-option">
+              <input type="checkbox" id="av-remote" value="Remote only" />
+              <label for="av-remote">Remote only</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- About -->
+        <div class="form-group">
+          <label for="about">
+            About you
+            <span class="hint">Optional — anything else we should know</span>
+          </label>
+          <textarea id="about" placeholder="e.g. I'm a retired teacher with 10 years of NGO experience in rural Maharashtra."></textarea>
+        </div>
+
+        <button class="btn-submit" type="submit" id="submitBtn">
+          Register as Volunteer
+        </button>
+
+      </form>
+    </div>
+
+    <!-- REGISTERED VOLUNTEERS -->
+    <h2 class="section-title">Registered Volunteers</h2>
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div id="volunteersContainer">
+        <div class="empty-state">Loading volunteers...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="toast"></div>
+
+  <script type="module">
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      orderBy,
+      query,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // ── YOUR Firebase config (same as ngo.html) ──
+    const firebaseConfig = {
+       apiKey: "AIzaSyBmMZdC9WgVCnXAQb6Jvx_n_JmEHE3z2U8",
+        authDomain: "volunteerbridge-5a97c.firebaseapp.com",
+        projectId: "volunteerbridge-5a97c",
+        storageBucket: "volunteerbridge-5a97c.firebasestorage.app",
+        messagingSenderId: "510303137686",
+        appId: "1:510303137686:web:00b136908afa7b48a477b7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
+    // ════════════════════════════════
+    // SKILLS TAG INPUT LOGIC
+    // ════════════════════════════════
+    let skills = []; // Array to hold skill strings
+
+    function renderTags() {
+      // Remove old tags (keep the input)
+      const wrapper = document.getElementById("skillsWrapper");
+      const input   = document.getElementById("skillInput");
+      // Clear all tag elements
+      wrapper.querySelectorAll(".skill-tag").forEach(t => t.remove());
+
+      // Re-render all tags before the input
+      skills.forEach((skill, i) => {
+        const tag = document.createElement("span");
+        tag.className = "skill-tag";
+        tag.innerHTML = `${skill} <button type="button" onclick="removeSkill(${i})">×</button>`;
+        wrapper.insertBefore(tag, input);
+      });
+
+      // Update hidden input
+      document.getElementById("skillsHidden").value = skills.join(", ");
+    }
+
+    window.removeSkill = function(index) {
+      skills.splice(index, 1);
+      renderTags();
+    };
+
+    document.getElementById("skillInput").addEventListener("keydown", (e) => {
+      // Add skill on Enter or comma key
+      if (e.key === "Enter" || e.key === ",") {
+        e.preventDefault();
+        const val = e.target.value.trim().replace(/,$/, "");
+        if (val && !skills.includes(val)) {
+          skills.push(val);
+          renderTags();
+        }
+        e.target.value = "";
+      }
+      // Remove last skill on Backspace if input is empty
+      if (e.key === "Backspace" && e.target.value === "" && skills.length > 0) {
+        skills.pop();
+        renderTags();
+      }
+    });
+
+    // ════════════════════════════════
+    // LOAD VOLUNTEERS FROM FIRESTORE
+    // ════════════════════════════════
+    async function loadVolunteers() {
+      const container = document.getElementById("volunteersContainer");
+      try {
+        const q    = query(collection(db, "volunteers"), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+
+        if (snap.empty) {
+          container.innerHTML = `<div class="empty-state">No volunteers registered yet.</div>`;
+          return;
+        }
+
+        let rows = "";
+        snap.forEach(doc => {
+          const v = doc.data();
+          // Build skill pills
+          const skillPills = (v.skills || [])
+            .map(s => `<span class="skill-pill">${s}</span>`)
+            .join("");
+
+          rows += `
+            <tr>
+              <td><strong>${v.name}</strong></td>
+              <td>${v.location}</td>
+              <td>${skillPills || "—"}</td>
+              <td>${(v.availability || []).join(", ") || "—"}</td>
+              <td>${v.phone}</td>
+            </tr>`;
+        });
+
+        container.innerHTML = `
+          <table class="vol-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Location</th>
+                <th>Skills</th>
+                <th>Availability</th>
+                <th>Phone</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>`;
+
+      } catch (err) {
+        container.innerHTML = `<div class="empty-state">Could not load data. Check Firebase config.</div>`;
+        console.error(err);
+      }
+    }
+
+    // ════════════════════════════════
+    // FORM SUBMISSION
+    // ════════════════════════════════
+    document.getElementById("volunteerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Validate at least one skill
+      if (skills.length === 0) {
+        showToast("Please add at least one skill.", "error");
+        document.getElementById("skillInput").focus();
+        return;
+      }
+
+      const btn = document.getElementById("submitBtn");
+
+      // Get availability checkboxes
+      const availability = [];
+      document.querySelectorAll(".avail-option input:checked")
+        .forEach(cb => availability.push(cb.value));
+
+      btn.disabled  = true;
+      btn.innerHTML = `<span class="spinner"></span> Registering...`;
+
+      try {
+        await addDoc(collection(db, "volunteers"), {
+          name:         document.getElementById("volName").value.trim(),
+          phone:        document.getElementById("phone").value.trim(),
+          location:     document.getElementById("volLocation").value.trim(),
+          experience:   Number(document.getElementById("experience").value) || 0,
+          skills,           // Array of skill strings
+          availability,     // Array of availability strings
+          about:        document.getElementById("about").value.trim(),
+          createdAt:    serverTimestamp()
+        });
+
+        showToast("Registered successfully! Welcome aboard.");
+        e.target.reset();
+        skills = [];
+        renderTags();
+        loadVolunteers();
+
+      } catch (err) {
+        showToast("Error saving. Check your Firebase config.", "error");
+        console.error(err);
+      } finally {
+        btn.disabled  = false;
+        btn.innerHTML = "Register as Volunteer";
+      }
+    });
+
+    // ════════════════════════════════
+    // TOAST HELPER
+    // ════════════════════════════════
+    function showToast(msg, type = "success") {
+      const toast   = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.className   = `show ${type}`;
+      setTimeout(() => { toast.className = ""; }, 3500);
+    }
+
+    // Load on page open
+    loadVolunteers();
+
+  </script>
+
+</body>
+</html>
