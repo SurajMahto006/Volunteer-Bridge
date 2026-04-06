@@ -246,14 +246,16 @@ nav .container {
 }
 
 .btn-secondary {
-  background: white;
+  background: var(--bg-card);
   border: 1.5px solid var(--border);
   color: var(--secondary);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover {
   border-color: var(--primary);
   color: var(--primary);
+  background: var(--bg-main);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
@@ -348,8 +350,10 @@ label {
 }
 
 table { width: 100%; border-collapse: collapse; text-align: left; }
-th { background: var(--bg-th); padding: 1.5rem 1.25rem; font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; border-bottom: 2px solid var(--border); }
-td { padding: 1.5rem 1.25rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; }
+th { background: var(--bg-th); padding: 1.5rem 1.25rem; font-size: 0.85rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; border-bottom: 2px solid var(--border); letter-spacing: 0.05em; }
+td { padding: 1.75rem 1.25rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; color: var(--text-main); }
+tr:nth-child(even) { background: rgba(var(--primary-glow), 0.02); }
+tr:hover { background: var(--bg-alt); transition: var(--transition); }
 tr:last-child td { border-bottom: none; }
 
 /* Responsive Grid Helpers */
