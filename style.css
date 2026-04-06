@@ -32,6 +32,10 @@
   --glass-border: rgba(255, 255, 255, 0.4);
   --glass-blur: blur(32px);
   
+  --bg-input: #fbfcfd;
+  --bg-table: #ffffff;
+  --bg-th: #f8fafc;
+  
   --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   --max-width: 1400px;
 }
@@ -53,6 +57,9 @@
   --bg-main: #020617;
   --bg-alt: #0f172a;
   --bg-card: rgba(15, 23, 42, 0.8);
+  --bg-input: #0f172a;
+  --bg-table: #0f172a;
+  --bg-th: #1e293b;
   --border: rgba(51, 65, 85, 0.6);
   
   --glass-bg: rgba(2, 6, 23, 0.7);
@@ -293,14 +300,15 @@ label {
   border-radius: var(--radius-md);
   font-family: inherit;
   font-size: 1rem;
-  background: #fbfcfd;
+  background: var(--bg-input);
   transition: var(--transition);
   outline: none;
+  color: var(--text-main);
 }
 
 .input-styled:focus {
   border-color: var(--primary);
-  background: white;
+  background: var(--bg-card);
   box-shadow: 0 0 0 5px var(--primary-glow);
 }
 
@@ -335,12 +343,12 @@ label {
   overflow-x: auto;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
-  background: white;
+  background: var(--bg-table);
   box-shadow: var(--shadow-md);
 }
 
 table { width: 100%; border-collapse: collapse; text-align: left; }
-th { background: #f8fafc; padding: 1.5rem 1.25rem; font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; border-bottom: 2px solid var(--border); }
+th { background: var(--bg-th); padding: 1.5rem 1.25rem; font-size: 0.8rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; border-bottom: 2px solid var(--border); }
 td { padding: 1.5rem 1.25rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; vertical-align: middle; }
 tr:last-child td { border-bottom: none; }
 
