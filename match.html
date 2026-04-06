@@ -33,7 +33,7 @@
     .need-card {
       padding: 2.5rem; border-radius: var(--radius-lg); border: 2px solid var(--border);
       cursor: pointer; transition: var(--transition);
-      background: white;
+      background: var(--bg-card);
     }
     .need-card:hover { border-color: var(--ai-accent); transform: translateY(-8px); box-shadow: var(--shadow-lg); }
     .need-card.selected { border-color: var(--ai-accent); background: var(--ai-bg); box-shadow: 0 15px 30px rgba(124, 58, 237, 0.1); }
@@ -120,7 +120,7 @@
     </div>
   </div>
 
-  <div class="card ani-fade-up" style="animation-delay: 0.2s; margin-top: 5rem; text-align: center; border: 3px dashed var(--ai-accent); padding: 4rem; background: var(--ai-bg);">
+    <div class="card ani-fade-up premium-card" style="animation-delay: 0.2s; margin-top: 5rem; text-align: center; border: 3px dashed var(--ai-accent); padding: 4rem; background: var(--ai-bg);">
     <h2 style="font-size: 2rem; margin-bottom: 1.5rem;">Initialize Optimization</h2>
     <p id="selectedInfo" style="margin-bottom: 2.5rem; font-weight: 800; color: var(--ai-accent); font-size: 1.25rem; letter-spacing: 0.05em;">AWAITING SIGNAL SELECTION...</p>
     <button class="btn btn-primary btn-match" id="matchBtn" onclick="runMatch()" disabled>
@@ -140,8 +140,8 @@
   </div>
 </div>
 
-<footer style="margin-top: 5rem;">
-  <div class="container" style="text-align: center; opacity: 0.5; font-size: 0.9rem;">
+<footer style="margin-top: 8rem;">
+  <div class="container" style="text-align: center; opacity: 0.5; font-size: 0.95rem; color: var(--text-muted);">
     &copy; 2026 VolunteerBridge OS. AI-Driven Coordination Engine.
   </div>
 </footer>

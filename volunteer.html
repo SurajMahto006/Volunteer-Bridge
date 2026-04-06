@@ -15,9 +15,9 @@
     .skills-wrapper {
       border: 2px solid var(--border); border-radius: 12px; padding: 0.6rem;
       display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
-      background: #fbfcfd; transition: var(--transition); min-height: 60px;
+      background: var(--bg-main); transition: var(--transition); min-height: 60px;
     }
-    .skills-wrapper:focus-within { border-color: var(--primary); background: white; box-shadow: 0 0 0 5px var(--primary-glow); }
+    .skills-wrapper:focus-within { border-color: var(--primary); background: var(--bg-card); box-shadow: 0 0 0 5px var(--primary-glow); }
     .skill-tag {
       display: inline-flex; align-items: center; gap: 8px;
       background: var(--primary-light); color: var(--primary-dark);
@@ -35,7 +35,7 @@
       color: var(--text-muted); transition: var(--transition); text-align: center;
       gap: 8px;
     }
-    .avail-option input:checked + label { background: var(--secondary); color: white; border-color: var(--secondary); box-shadow: 0 8px 15px rgba(30, 41, 59, 0.2); }
+    .avail-option input:checked + label { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 8px 15px var(--primary-glow); }
     .avail-option label i { width: 20px; height: 20px; }
     
     .skill-pill { display: inline-block; background: var(--primary-light); color: var(--primary-dark); border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; font-weight: 700; margin: 3px; }
