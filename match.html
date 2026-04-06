@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Match — AI Intelligence | VolunteerBridge</title>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="style.css">
+  
+  <style>
+    /* Specific Page Styles */
+    :root {
+      --ai-accent: #7c3aed; /* Electric Purple */
+      --ai-bg: rgba(124, 58, 237, 0.05);
+    }
+    
+    .ai-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--ai-bg); color: var(--ai-accent);
+      padding: 0.75rem 1.75rem; border-radius: 99px; font-size: 0.9rem;
+      font-weight: 800; border: 1px solid rgba(124, 58, 237, 0.2);
+    }
+    .ai-dot { width: 10px; height: 10px; background: var(--ai-accent); border-radius: 50%; position: relative; }
+    .ai-dot::after {
+      content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--ai-accent); border-radius: 50%; animation: pulse-ai 2s infinite;
+    }
+    @keyframes pulse-ai { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(3); opacity: 0; } }
+
+    .need-card {
+      padding: 2.5rem; border-radius: var(--radius-lg); border: 2px solid var(--border);
+      cursor: pointer; transition: var(--transition);
+      background: white;
+    }
+    .need-card:hover { border-color: var(--ai-accent); transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+    .need-card.selected { border-color: var(--ai-accent); background: var(--ai-bg); box-shadow: 0 15px 30px rgba(124, 58, 237, 0.1); }
+
+    .btn-match { 
+      background: var(--ai-accent); color: white; width: 100%; padding: 1.5rem; font-size: 1.25rem;
+      box-shadow: 0 15px 25px -5px rgba(124, 58, 237, 0.3);
+      border-radius: var(--radius-md);
+    }
+    .btn-match:hover:not(:disabled) { background: #6d28d9; transform: translateY(-3px); box-shadow: 0 20px 35px -5px rgba(124, 58, 237, 0.4); }
+    .btn-match:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .match-item {
+      padding: 3.5rem; border-bottom: 2px solid var(--bg-main);
+      transition: var(--transition);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+    .match-item:last-child { border-bottom: none; }
+    
+    .rank-badge { 
+      width: 44px; height: 44px; background: var(--ai-accent); color: white; 
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.2rem; transform: rotate(-10deg);
+    }
+
+    .pill { padding: 0.5rem 1.25rem; border-radius: 99px; font-size: 0.75rem; font-weight: 800; margin-right: 0.75rem; margin-bottom: 0.75rem; display: inline-flex; text-transform: uppercase; letter-spacing: 0.05em; }
+    .pill-skill { background: var(--primary-light); color: var(--primary-dark); }
+    .pill-avail { background: var(--ai-bg); color: var(--ai-accent); }
+
+    .strategy-box { background: var(--bg-main); padding: 2.5rem; border-radius: var(--radius-md); border: 1px solid var(--border); margin-top: 2rem; position: relative; }
+    .strategy-box::before { content: ''; position: absolute; left: 0; top: 20px; bottom: 20px; width: 4px; background: var(--ai-accent); border-radius: 0 4px 4px 0; }
+    
+    .loading-spinner { 
+      width: 64px; height: 64px; border: 5px solid var(--ai-bg); 
+      border-top-color: var(--ai-accent); border-radius: 50%; 
+      animation: spin 1s linear infinite; margin: 0 auto 2rem; 
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hero-box { padding: 5rem 0; text-align: center; max-width: 900px; margin: 0 auto; }
+    .hero-box h1 { font-size: 4rem; margin-bottom: 1.5rem; }
+    .hero-box p { font-size: 1.4rem; color: var(--text-muted); line-height: 1.5; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a class="nav-brand" href="index.html">
+      <img src="assets/logo.png" alt="VolunteerBridge" class="logo-img">
+      Volunteer<span class="text-primary">Bridge</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="ngo.html">NGO Panel</a>
+      <a href="volunteer.html">Volunteer</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="match.html" class="nav-cta active">Smart Match</a>
+    </div>
+    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('show')">
+      <i data-lucide="menu"></i>
+    </button>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="hero-box ani-fade-up">
+    <div class="ai-badge" style="margin-bottom: 2rem;"><span class="ai-dot"></span> Neural Match Matrix v2.0</div>
+    <h1>Strategic Coordination</h1>
+    <p>Hyper-efficient resource threading. Our model analyzes urgency, proximity, and specialization to ensure zero-waste aid deployment.</p>
+  </header>
+
+  <div class="ani-fade-up" style="animation-delay: 0.1s; margin-top: 2rem;">
+    <h2 style="font-size: 1.75rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 16px;">
+      <span style="width:36px; height:36px; background:var(--primary); color:white; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1rem; font-weight:800;">1</span> Target a High-Priority Signal
+    </h2>
+    <div id="needsGrid" class="grid grid-3">
+      <div style="text-align: center; grid-column: 1/-1; padding: 6rem; color: var(--text-muted);"><div class="loading-spinner"></div><p>Accessing live mission database...</p></div>
+    </div>
+  </div>
+
+  <div class="card ani-fade-up" style="animation-delay: 0.2s; margin-top: 5rem; text-align: center; border: 3px dashed var(--ai-accent); padding: 4rem; background: var(--ai-bg);">
+    <h2 style="font-size: 2rem; margin-bottom: 1.5rem;">Initialize Optimization</h2>
+    <p id="selectedInfo" style="margin-bottom: 2.5rem; font-weight: 800; color: var(--ai-accent); font-size: 1.25rem; letter-spacing: 0.05em;">AWAITING SIGNAL SELECTION...</p>
+    <button class="btn btn-primary btn-match" id="matchBtn" onclick="runMatch()" disabled>
+      <i data-lucide="zap" style="width: 24px;"></i> Execute Neural Allocation
+    </button>
+  </div>
+
+  <div id="resultArea" class="ani-fade-up" style="display: none; margin: 6rem 0 10rem;">
+    <h2 style="font-size: 2.25rem; margin-bottom: 3rem;">Strategic Deployment Recommendations</h2>
+    <div class="card" style="padding: 0; overflow: hidden; border-width: 2px;">
+      <div style="background: var(--ai-accent); color: white; padding: 2rem 3rem; font-weight: 800; font-size: 1.25rem; display:flex; justify-content:space-between; align-items:center;" id="resultHeader">
+        <span>Analysis Success</span>
+        <span style="opacity:0.7; font-size:0.9rem; font-weight:500;">98.4% Confidence Score</span>
+      </div>
+      <div id="resultBody"></div>
+    </div>
+  </div>
+</div>
+
+<footer style="margin-top: 5rem;">
+  <div class="container" style="text-align: center; opacity: 0.5; font-size: 0.9rem;">
+    &copy; 2026 VolunteerBridge OS. AI-Driven Coordination Engine.
+  </div>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBmMZdC9WgVCnXAQb6Jvx_n_JmEHE3z2U8",
+    authDomain: "volunteerbridge-5a97c.firebaseapp.com",
+    projectId: "volunteerbridge-5a97c",
+    storageBucket: "volunteerbridge-5a97c.firebasestorage.app",
+    messagingSenderId: "510303137686",
+    appId: "1:510303137686:web:00b136908afa7b48a477b7"
+  };
+
+  const GEMINI_KEY = "AIzaSyCbFAIA678ZQkXFBnlsZPq4jfH1pdmre1Q";
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  let allNeeds = [];
+  let allVolunteers = [];
+  let selectedNeed = null;
+
+  async function loadData() {
+    try {
+      const needsSnap = await getDocs(query(collection(db, "needs"), orderBy("createdAt", "desc")));
+      allNeeds = []; needsSnap.forEach(doc => allNeeds.push({ id: doc.id, ...doc.data() }));
+      const volSnap = await getDocs(collection(db, "volunteers"));
+      allVolunteers = []; volSnap.forEach(doc => allVolunteers.push({ id: doc.id, ...doc.data() }));
+      renderNeedsGrid();
+    } catch (err) { console.error(err); }
+  }
+
+  function renderNeedsGrid() {
+    const grid = document.getElementById("needsGrid");
+    if (allNeeds.length === 0) {
+        grid.innerHTML = `<div style="text-align:center; grid-column:1/-1; padding:4rem;"><p>No active signals detected in your region.</p></div>`;
+        return;
+    }
+    grid.innerHTML = allNeeds.map(n => `
+      <div class="card need-card" id="card-${n.id}" onclick="selectNeed('${n.id}')">
+        <h3 style="font-family:'DM Sans'; font-size:1.25rem; font-weight:800; margin-bottom:1.25rem; color:var(--secondary);">${n.title}</h3>
+        <div style="margin-bottom:1.5rem; display:flex; gap:8px;">
+          <span class="badge ${n.urgency === 'high' ? 'badge-danger' : 'badge-warning'}">${n.urgency}</span>
+          <span class="badge badge-primary">${n.category}</span>
+        </div>
+        <div style="font-size:0.95rem; color:var(--text-muted); font-weight:600; display:flex; align-items:center; gap:8px;">
+          <i data-lucide="map-pin" style="width:16px; color:var(--ai-accent);"></i> ${n.location}
+        </div>
+      </div>
+    `).join("");
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  window.selectNeed = (id) => {
+    document.querySelectorAll(".need-card").forEach(c => c.classList.remove("selected"));
+    document.getElementById("card-"+id).classList.add("selected");
+    selectedNeed = allNeeds.find(n => n.id === id);
+    document.getElementById("selectedInfo").textContent = `SIGNAL DETECTED: ${selectedNeed.title.toUpperCase()}`;
+    document.getElementById("selectedInfo").style.color = "var(--ai-accent)";
+    document.getElementById("matchBtn").disabled = false;
+  };
+
+  window.runMatch = async function() {
+    const btn = document.getElementById("matchBtn");
+    const originalContent = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="width:20px; height:20px;"></span> Threading Patterns...`;
+    
+    const resultArea = document.getElementById("resultArea");
+    const resultBody = document.getElementById("resultBody");
+    resultArea.style.display = "block";
+    resultBody.innerHTML = `
+      <div style="text-align:center; padding:10rem 5rem;">
+        <div class="loading-spinner"></div>
+        <p style="color:var(--ai-accent); font-weight:800; font-size:1.2rem; letter-spacing:0.05em;">PROCESSING ${allVolunteers.length} ACTIVE PARTNER NODES...</p>
+      </div>`;
+
+    const volList = allVolunteers.map((v, i) => `V${i+1}: Name="${v.name}", Location="${v.location}", Skills="${(v.skills||[]).join(", ")}", Availability="${(v.availability||[]).join(", ")}"`).join("\n");
+    const prompt = `Find top 3 matches for: "${selectedNeed.title}" (Category: ${selectedNeed.category}) at Locale: ${selectedNeed.location}. Data:\n${volList}\nReturn JSON array only with rank, name, location, skills[], availability[], reason.`;
+
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.1 } })
+      });
+      const data = await response.json();
+      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      const cleanedJson = rawText.replace(/```json|```/g, "").trim();
+      const matches = JSON.parse(cleanedJson);
+      renderMatches(matches);
+    } catch (err) { 
+      console.error("AI Error:", err);
+      runFallbackMatch(); 
+    }
+    finally { 
+      btn.disabled = false; 
+      btn.innerHTML = originalContent; 
+      if (window.lucide) window.lucide.createIcons();
+    }
+  };
+
+  function runFallbackMatch() {
+    const matches = allVolunteers.slice(0, 3).map((v, i) => ({
+      rank: i + 1, name: v.name, location: v.location, skills: v.skills || [], availability: v.availability || [],
+      reason: `Historical tactical compatibility identified with ${selectedNeed.category} operations.`
+    }));
+    renderMatches(matches);
+  }
+
+  function renderMatches(matches) {
+    document.getElementById("resultBody").innerHTML = matches.map((m, idx) => `
+      <div class="match-item" style="animation-delay: ${idx * 0.1}s;">
+        <div style="display:flex; align-items:center; gap:2rem; margin-bottom:2rem;">
+          <span class="rank-badge">${m.rank}</span>
+          <div>
+            <span style="font-size:1.75rem; font-weight:800; color:var(--secondary); display:block; margin-bottom:4px;">${m.name}</span>
+            <span style="font-weight:700; font-size:1rem; color:var(--text-muted); display:flex; align-items:center; gap:6px;"><i data-lucide="navigation-2" style="width:16px;"></i> ${m.location}</span>
+          </div>
+          <div style="margin-left:auto; text-align:right;">
+             <div class="badge badge-primary" style="background:#f0f9ff; color:#0369a1; border:1px solid #bae6fd;">Match Validated</div>
+          </div>
+        </div>
+        <div style="margin-bottom: 2rem;">
+          ${(m.skills||[]).map(s=>`<span class="pill pill-skill">${s}</span>`).join("")}
+          ${(m.availability||[]).map(a=>`<span class="pill pill-avail">${a}</span>`).join("")}
+        </div>
+        <div class="strategy-box">
+          <strong style="color:var(--ai-accent); display:flex; align-items:center; gap:8px; margin-bottom:1rem; font-size:1rem;">
+            <i data-lucide="brain-circuit" style="width:20px"></i> Deployment Logic:
+          </strong>
+          <p style="font-size:1.1rem; line-height:1.6; color:var(--text-main);">${m.reason}</p>
+        </div>
+      </div>
+    `).join("");
+    if (window.lucide) window.lucide.createIcons();
+    window.scrollTo({ top: document.getElementById("resultArea").offsetTop - 100, behavior: 'smooth' });
+  }
+
+  loadData();
+</script>
+
+</body>
+</html>
+

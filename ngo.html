@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NGO Panel — Mission Control | VolunteerBridge</title>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="style.css">
+  
+  <style>
+    /* Specific Page Styles */
+    .urgency-chips { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .urgency-chip input { display: none; }
+    .urgency-chip label {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0.8rem 1.75rem; border-radius: 12px; cursor: pointer;
+      font-size: 0.95rem; font-weight: 700; border: 2px solid var(--border);
+      color: var(--text-muted); transition: var(--transition);
+      background: #fbfcfd;
+    }
+    .urgency-chip input:checked + label.low { background: var(--primary-light); border-color: var(--primary); color: var(--primary); box-shadow: 0 4px 12px var(--primary-glow); }
+    .urgency-chip input:checked + label.medium { background: #fff7ed; border-color: var(--accent); color: var(--accent); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1); }
+    .urgency-chip input:checked + label.high { background: #fef2f2; border-color: var(--danger); color: var(--danger); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1); }
+    
+    .spinner {
+      width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3);
+      border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    #toast {
+      position: fixed; bottom: 2.5rem; right: 2.5rem; padding: 1.25rem 2.5rem;
+      border-radius: var(--radius-md); background: var(--secondary); color: white;
+      box-shadow: var(--shadow-lg); transform: translateY(100px);
+      transition: var(--transition); opacity: 0; z-index: 2000;
+      font-weight: 700; display: flex; align-items: center; gap: 12px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { background: var(--primary); }
+    #toast.error { background: var(--danger); }
+    
+    .header-box { padding: 4rem 0; text-align: center; max-width: 800px; margin: 0 auto; }
+    .header-box h1 { font-size: 3.5rem; margin-bottom: 1rem; }
+    .header-box p { font-size: 1.25rem; color: var(--text-muted); }
+
+    .form-card { max-width: 900px; margin: 0 auto 5rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a class="nav-brand" href="index.html">
+      <img src="assets/logo.png" alt="VolunteerBridge" class="logo-img">
+      Volunteer<span class="text-primary">Bridge</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="ngo.html" class="active">NGO Panel</a>
+      <a href="volunteer.html">Volunteer</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="match.html" class="nav-cta">Smart Match</a>
+    </div>
+    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('show')">
+      <i data-lucide="menu"></i>
+    </button>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="header-box ani-fade-up">
+    <h1>Mission Control</h1>
+    <p>Deploy localized data signals to alert our network of skilled professionals to your organization's emerging needs.</p>
+  </header>
+
+  <div class="card form-card ani-fade-up" style="animation-delay: 0.1s;">
+    <h2 style="margin-bottom: 2.5rem; font-size: 2rem; border-bottom: 2px solid var(--bg-main); padding-bottom: 1rem;">Report New Case</h2>
+    <form id="needForm">
+      <div class="form-group">
+        <label for="title">Title of Requirement <span style="color:var(--danger)">*</span></label>
+        <input type="text" id="title" class="input-styled" placeholder="e.g. Critical Supply Shortage at East Hospital" required />
+      </div>
+
+      <div class="grid grid-2">
+        <div class="form-group">
+          <label for="category">Mission Category <span style="color:var(--danger)">*</span></label>
+          <select id="category" class="input-styled" required>
+            <option value="" disabled selected>Select category</option>
+            <option value="Food">Food & Nutrition</option>
+            <option value="Medical">Medical & Health</option>
+            <option value="Education">Education</option>
+            <option value="Shelter">Shelter & Housing</option>
+            <option value="Water">Water & Sanitation</option>
+            <option value="Livelihood">Livelihood & Jobs</option>
+            <option value="Disaster">Disaster Relief</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="location">Focal Location <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="location" class="input-styled" placeholder="City or District" required />
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="form-group">
+          <label for="affected">Impact Scope <span style="text-transform:none; opacity:0.6; font-weight:400;">(Est. People)</span></label>
+          <input type="number" id="affected" class="input-styled" placeholder="e.g. 500" min="1" />
+        </div>
+        <div class="form-group">
+          <label for="ngoName">Reporting Organization <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="ngoName" class="input-styled" placeholder="Your NGO Name" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Strategic Details</label>
+        <textarea id="description" class="input-styled" placeholder="Describe the specific expertise or equipment required for this mission..." rows="4"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Urgency Level <span style="color:var(--danger)">*</span></label>
+        <div class="urgency-chips">
+          <div class="urgency-chip">
+            <input type="radio" name="urgency" id="u-low" value="low" />
+            <label for="u-low" class="low"><i data-lucide="check" style="width:16px; margin-right:8px"></i> Standard</label>
+          </div>
+          <div class="urgency-chip">
+            <input type="radio" name="urgency" id="u-medium" value="medium" checked />
+            <label for="u-medium" class="medium"><i data-lucide="clock" style="width:16px; margin-right:8px"></i> Priority</label>
+          </div>
+          <div class="urgency-chip">
+            <input type="radio" name="urgency" id="u-high" value="high" />
+            <label for="u-high" class="high"><i data-lucide="zap" style="width:16px; margin-right:8px"></i> Critical</label>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" type="submit" id="submitBtn" style="width:100%; padding: 1.25rem; font-size: 1.1rem;">
+        <i data-lucide="send" style="width: 20px;"></i> Dispatch Mission Signal
+      </button>
+    </form>
+  </div>
+
+  <div class="ani-fade-up" style="animation-delay: 0.2s; padding-bottom: 5rem;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2.5rem;">
+      <h2 style="font-size: 2.25rem;">Active Signal Log</h2>
+      <div class="badge badge-primary" style="font-size: 0.9rem;">Live Feed</div>
+    </div>
+    <div class="table-wrapper">
+      <div id="entriesContainer">
+        <div style="text-align: center; padding: 6rem; color: var(--text-muted);"><div class="spinner" style="border-top-color:var(--primary); margin: 0 auto 1.5rem;"></div><p>Syncing encrypted mission data...</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<footer style="margin-top: 5rem;">
+  <div class="container">
+    <div class="footer-bottom">
+      &copy; 2026 VolunteerBridge OS. Professional NGO Portal.
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBmMZdC9WgVCnXAQb6Jvx_n_JmEHE3z2U8",
+    authDomain: "volunteerbridge-5a97c.firebaseapp.com",
+    projectId: "volunteerbridge-5a97c",
+    storageBucket: "volunteerbridge-5a97c.firebasestorage.app",
+    messagingSenderId: "510303137686",
+    appId: "1:510303137686:web:00b136908afa7b48a477b7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  function showToast(msg, type = "success") {
+    const toast = document.getElementById("toast");
+    const icon = type === "success" ? "check-circle" : "alert-circle";
+    toast.innerHTML = `<i data-lucide="${icon}"></i> ${msg}`;
+    toast.className = `show ${type}`;
+    if (window.lucide) window.lucide.createIcons();
+    setTimeout(() => { toast.className = ""; }, 4000);
+  }
+
+  async function loadEntries() {
+    const container = document.getElementById("entriesContainer");
+    try {
+      const q = query(collection(db, "needs"), orderBy("createdAt", "desc"));
+      const snap = await getDocs(q);
+      
+      if (snap.empty) {
+        container.innerHTML = `<div style="text-align: center; padding: 6rem; color: var(--text-muted);"><p>No active mission signals found.</p></div>`;
+        return;
+      }
+
+      let rows = "";
+      snap.forEach(doc => {
+        const d = doc.data();
+        const badgeClass = `badge-${d.urgency}`;
+        const urgencyLabel = d.urgency === 'high' ? 'CRITICAL' : (d.urgency === 'medium' ? 'PRIORITY' : 'STANDARD');
+        rows += `
+          <tr>
+            <td style="padding: 2rem 1.25rem;">
+              <div style="font-weight: 800; color: var(--secondary); font-size: 1.1rem; margin-bottom: 0.25rem;">${d.title}</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;"><i data-lucide="tag" style="width:12px"></i> ${d.category}</div>
+            </td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px; font-weight:600;">
+                <i data-lucide="map-pin" style="width:16px; color:var(--primary);"></i> ${d.location}
+              </div>
+            </td>
+            <td><span class="badge ${badgeClass}">${urgencyLabel}</span></td>
+            <td>
+              <div style="font-weight: 700; color: var(--text-main);">${d.ngoName}</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">${d.affected ? d.affected + ' people impacted' : ''}</div>
+            </td>
+          </tr>`;
+      });
+
+      container.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Need Signal</th>
+              <th>Deployment Area</th>
+              <th>Urgency</th>
+              <th>Reporting Body</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+      if (window.lucide) window.lucide.createIcons();
+    } catch (err) { console.error(err); }
+  }
+
+  document.getElementById("needForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("submitBtn");
+    const originalContent = btn.innerHTML;
+    
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner"></span> Encrypting & Sending...`;
+
+    try {
+      await addDoc(collection(db, "needs"), {
+        title: document.getElementById("title").value.trim(),
+        category: document.getElementById("category").value,
+        location: document.getElementById("location").value.trim(),
+        affected: document.getElementById("affected").value ? Number(document.getElementById("affected").value) : null,
+        ngoName: document.getElementById("ngoName").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        urgency: document.querySelector('input[name="urgency"]:checked').value,
+        createdAt: serverTimestamp()
+      });
+
+      showToast("Mission signal dispatched successfully!");
+      e.target.reset();
+      document.getElementById("u-medium").checked = true;
+      loadEntries();
+    } catch (err) {
+      showToast("Dispatch failed. Check connection.", "error");
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = originalContent;
+      if (window.lucide) window.lucide.createIcons();
+    }
+  });
+
+  loadEntries();
+  if (window.lucide) window.lucide.createIcons();
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Volunteer Registration — Join the Force | VolunteerBridge</title>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="style.css">
+  
+  <style>
+    /* Specific Page Styles */
+    .skills-wrapper {
+      border: 2px solid var(--border); border-radius: 12px; padding: 0.6rem;
+      display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;
+      background: #fbfcfd; transition: var(--transition); min-height: 60px;
+    }
+    .skills-wrapper:focus-within { border-color: var(--primary); background: white; box-shadow: 0 0 0 5px var(--primary-glow); }
+    .skill-tag {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--primary-light); color: var(--primary-dark);
+      border-radius: 8px; padding: 0.5rem 0.85rem; font-size: 0.9rem; font-weight: 700;
+    }
+    .skill-tag button { background: none; border: none; cursor: pointer; color: var(--primary); padding: 0; font-size: 1.25rem; line-height: 1; display: flex; }
+    #skillInput { border: none; outline: none; background: transparent; font-size: 1rem; flex: 1; min-width: 150px; }
+
+    .availability-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .avail-option input { display: none; }
+    .avail-option label {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 1.25rem 1rem; border-radius: 12px; cursor: pointer;
+      font-size: 0.85rem; font-weight: 700; border: 2px solid var(--border);
+      color: var(--text-muted); transition: var(--transition); text-align: center;
+      gap: 8px;
+    }
+    .avail-option input:checked + label { background: var(--secondary); color: white; border-color: var(--secondary); box-shadow: 0 8px 15px rgba(30, 41, 59, 0.2); }
+    .avail-option label i { width: 20px; height: 20px; }
+    
+    .skill-pill { display: inline-block; background: var(--primary-light); color: var(--primary-dark); border-radius: 6px; padding: 4px 10px; font-size: 0.8rem; font-weight: 700; margin: 3px; }
+
+    #toast {
+      position: fixed; bottom: 2.5rem; right: 2.5rem; padding: 1.25rem 2.5rem;
+      border-radius: var(--radius-md); background: var(--secondary); color: white;
+      box-shadow: var(--shadow-lg); transform: translateY(100px);
+      transition: var(--transition); opacity: 0; z-index: 2000;
+      font-weight: 700; display: flex; align-items: center; gap: 12px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.success { background: var(--primary); }
+    #toast.error { background: var(--danger); }
+    
+    .spinner { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .header-box { padding: 4rem 0; text-align: center; max-width: 800px; margin: 0 auto; }
+    .header-box h1 { font-size: 3.5rem; margin-bottom: 1rem; }
+    .header-box p { font-size: 1.25rem; color: var(--text-muted); }
+
+    @media (max-width: 640px) { .availability-grid { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a class="nav-brand" href="index.html">
+      <img src="assets/logo.png" alt="VolunteerBridge" class="logo-img">
+      Volunteer<span class="text-primary">Bridge</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="ngo.html">NGO Panel</a>
+      <a href="volunteer.html" class="active">Volunteer</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="match.html" class="nav-cta">Smart Match</a>
+    </div>
+    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('show')">
+      <i data-lucide="menu"></i>
+    </button>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="header-box ani-fade-up">
+    <h1>Join the Force</h1>
+    <p>Become a certified Impact Partner. Your expertise is a strategic asset — deploy it where it matters most.</p>
+  </header>
+
+  <div class="card ani-fade-up" style="max-width: 900px; margin: 0 auto 5rem; animation-delay: 0.1s;">
+    <h2 style="margin-bottom: 2.5rem; font-size: 2rem; border-bottom: 2px solid var(--bg-main); padding-bottom: 1rem;">Service Enrollment</h2>
+    <form id="volunteerForm">
+      <div class="grid grid-2">
+        <div class="form-group">
+          <label for="volName">Full Identity <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="volName" class="input-styled" placeholder="e.g. Dr. Alex Rivers" required />
+        </div>
+        <div class="form-group">
+          <label for="phone">Secure Contact <span style="color:var(--danger)">*</span></label>
+          <input type="tel" id="phone" class="input-styled" placeholder="+91 98XXX XXX00" required />
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="form-group">
+          <label for="volLocation">Operational Base <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="volLocation" class="input-styled" placeholder="City or Region" required />
+        </div>
+        <div class="form-group">
+          <label for="experience">Years of Domain Experience</label>
+          <input type="number" id="experience" class="input-styled" placeholder="0" min="0" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Core Competencies <span style="color:var(--danger)">*</span> <span style="text-transform:none; opacity:0.5; margin-left:8px; font-weight:400;">(Press Enter to add tags)</span></label>
+        <div class="skills-wrapper" id="skillsWrapper" onclick="document.getElementById('skillInput').focus()">
+          <input type="text" id="skillInput" placeholder="e.g. Healthcare, Logistics, Rescue..." />
+        </div>
+        <input type="hidden" id="skillsHidden" />
+      </div>
+
+      <div class="form-group">
+        <label>Operational Window <span style="text-transform:none; opacity:0.5; margin-left:8px; font-weight:400;">(Multiselect)</span></label>
+        <div class="availability-grid">
+          <div class="avail-option">
+            <input type="checkbox" id="av-weekday" value="Weekdays" />
+            <label for="av-weekday"><i data-lucide="calendar"></i> Weekdays</label>
+          </div>
+          <div class="avail-option">
+            <input type="checkbox" id="av-weekend" value="Weekends" />
+            <label for="av-weekend"><i data-lucide="sun"></i> Weekends</label>
+          </div>
+          <div class="avail-option">
+            <input type="checkbox" id="av-morning" value="Mornings" />
+            <label for="av-morning"><i data-lucide="sunrise"></i> Mornings</label>
+          </div>
+          <div class="avail-option">
+            <input type="checkbox" id="av-evening" value="Evenings" />
+            <label for="av-evening"><i data-lucide="sunset"></i> Evenings</label>
+          </div>
+          <div class="avail-option">
+            <input type="checkbox" id="av-fulltime" value="Full-time" />
+            <label for="av-fulltime"><i data-lucide="award"></i> Full-time</label>
+          </div>
+          <div class="avail-option">
+            <input type="checkbox" id="av-remote" value="Remote only" />
+            <label for="av-remote"><i data-lucide="monitor"></i> Remote</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="about">Professional Overview</label>
+        <textarea id="about" class="input-styled" placeholder="Briefly describe your specialization and mission history..." rows="4"></textarea>
+      </div>
+
+      <button class="btn btn-primary" type="submit" id="submitBtn" style="width:100%; padding: 1.25rem; font-size: 1.1rem;">
+        <i data-lucide="user-plus" style="width: 20px;"></i> Initialize Registration
+      </button>
+    </form>
+  </div>
+
+  <div class="ani-fade-up" style="animation-delay: 0.2s; padding-bottom: 5rem;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2.5rem;">
+      <h2 style="font-size: 2.25rem;">Impact Partner Network</h2>
+      <div class="badge badge-primary" style="font-size: 0.9rem;">Global Ready</div>
+    </div>
+    <div class="table-wrapper">
+      <div id="volunteersContainer">
+        <div style="text-align: center; padding: 6rem; color: var(--text-muted);"><div class="spinner" style="border-top-color:var(--primary); margin: 0 auto 1.5rem;"></div><p>Syncing network roster...</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<footer style="margin-top: 5rem;">
+  <div class="container">
+    <div class="footer-bottom">
+      &copy; 2026 VolunteerBridge OS. Professional Volunteer Network.
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBmMZdC9WgVCnXAQb6Jvx_n_JmEHE3z2U8",
+    authDomain: "volunteerbridge-5a97c.firebaseapp.com",
+    projectId: "volunteerbridge-5a97c",
+    storageBucket: "volunteerbridge-5a97c.firebasestorage.app",
+    messagingSenderId: "510303137686",
+    appId: "1:510303137686:web:00b136908afa7b48a477b7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  let skills = [];
+
+  function showToast(msg, type = "success") {
+    const toast = document.getElementById("toast");
+    const icon = type === "success" ? "check-circle" : "alert-circle";
+    toast.innerHTML = `<i data-lucide="${icon}"></i> ${msg}`;
+    toast.className = `show ${type}`;
+    if (window.lucide) window.lucide.createIcons();
+    setTimeout(() => { toast.className = ""; }, 4000);
+  }
+
+  function renderTags() {
+    const wrapper = document.getElementById("skillsWrapper");
+    const input = document.getElementById("skillInput");
+    wrapper.querySelectorAll(".skill-tag").forEach(t => t.remove());
+    skills.forEach((skill, i) => {
+      const tag = document.createElement("span");
+      tag.className = "skill-tag";
+      tag.innerHTML = `${skill} <button type="button" onclick="removeSkill(${i})"><i data-lucide="x" style="width:14px"></i></button>`;
+      wrapper.insertBefore(tag, input);
+    });
+    document.getElementById("skillsHidden").value = skills.join(", ");
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  window.removeSkill = (i) => { skills.splice(i, 1); renderTags(); };
+
+  document.getElementById("skillInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const val = e.target.value.trim().replace(/,$/, "");
+      if (val && !skills.includes(val)) { skills.push(val); renderTags(); }
+      e.target.value = "";
+    }
+  });
+
+  async function loadVolunteers() {
+    const container = document.getElementById("volunteersContainer");
+    try {
+      const q = query(collection(db, "volunteers"), orderBy("createdAt", "desc"));
+      const snap = await getDocs(q);
+      
+      if (snap.empty) {
+        container.innerHTML = `<div style="text-align: center; padding: 6rem; color: var(--text-muted);"><p>No volunteers registered in current sector.</p></div>`;
+        return;
+      }
+
+      let rows = "";
+      snap.forEach(doc => {
+        const v = doc.data();
+        const skillPills = (v.skills || []).map(s => `<span class="skill-pill">${s}</span>`).join("");
+        rows += `
+          <tr>
+            <td style="padding: 2rem 1.25rem;">
+              <div style="font-weight: 800; color: var(--secondary); font-size: 1.1rem; margin-bottom: 0.25rem;">${v.name}</div>
+              <div style="font-size: 0.85rem; color: var(--text-muted); display:flex; align-items:center; gap:6px;"><i data-lucide="shield-check" style="width:14px"></i> Partner</div>
+            </td>
+            <td>
+              <div style="display:flex; align-items:center; gap:8px; font-weight:600;">
+                <i data-lucide="navigation" style="width:16px; color:var(--primary);"></i> ${v.location}
+              </div>
+            </td>
+            <td style="max-width: 300px;">${skillPills || "—"}</td>
+            <td>
+              <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary); background: var(--primary-light); padding: 0.4rem 0.8rem; border-radius: 6px; display:inline-block;">
+                ${(v.availability || []).join(", ") || "On-call"}
+              </div>
+            </td>
+            <td>
+               <div style="font-weight: 700;">${v.phone}</div>
+               <div style="font-size: 0.8rem; color: var(--text-muted);">${v.experience || 0} yrs experience</div>
+            </td>
+          </tr>`;
+      });
+
+      container.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Partner Name</th>
+              <th>Operational Base</th>
+              <th>Core Competencies</th>
+              <th>Dispatch Window</th>
+              <th>Contact Info</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+      if (window.lucide) window.lucide.createIcons();
+    } catch (err) { console.error(err); }
+  }
+
+  document.getElementById("volunteerForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (skills.length === 0) { showToast("Declare at least one competency.", "error"); return; }
+    
+    const btn = document.getElementById("submitBtn");
+    const originalContent = btn.innerHTML;
+    const availability = [];
+    document.querySelectorAll(".avail-option input:checked").forEach(cb => availability.push(cb.value));
+
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner"></span> Validating & Enrolling...`;
+
+    try {
+      await addDoc(collection(db, "volunteers"), {
+        name: document.getElementById("volName").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        location: document.getElementById("volLocation").value.trim(),
+        experience: Number(document.getElementById("experience").value) || 0,
+        skills,
+        availability,
+        about: document.getElementById("about").value.trim(),
+        createdAt: serverTimestamp()
+      });
+      showToast("Partner registration complete!");
+      e.target.reset();
+      skills = [];
+      renderTags();
+      loadVolunteers();
+    } catch (err) { showToast("Error in registration sequence.", "error"); }
+    finally { 
+      btn.disabled = false; 
+      btn.innerHTML = originalContent; 
+      if (window.lucide) window.lucide.createIcons();
+    }
+  });
+
+  loadVolunteers();
+  if (window.lucide) window.lucide.createIcons();
+</script>
+
+</body>
+</html>
+

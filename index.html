@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VolunteerBridge — Strategic Community Resource Engine</title>
+  
+  <meta name="description" content="AI-powered resource allocation engine connecting community needs with skilled volunteers in real-time."/>
+  
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="style.css">
+  
+  <style>
+    /* Hero Image Override */
+    .hero {
+      position: relative;
+      padding: 10rem 0 12rem;
+      text-align: center;
+      background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.3)), url('assets/hero-bg.png') center/cover no-repeat;
+      color: white;
+      overflow: hidden;
+    }
+    
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 99px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .hero h1 { font-size: clamp(3rem, 8vw, 5.5rem); margin-bottom: 1.5rem; color: white; }
+    .hero h1 span { color: #4ade80; }
+    .hero p { color: rgba(255, 255, 255, 0.9); font-size: 1.4rem; max-width: 750px; margin: 0 auto 3.5rem; line-height: 1.5; text-wrap: balance; }
+    
+    .hero-cta { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+    
+    .stats-strip {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: 4rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+      text-align: center;
+      margin-top: -6rem;
+      position: relative;
+      z-index: 10;
+      box-shadow: 0 40px 60px -15px rgba(0,0,0,0.1);
+    }
+    
+    .stat-val { font-size: 3.5rem; font-weight: 800; color: var(--primary); display: block; line-height: 1; margin-bottom: 0.75rem; letter-spacing: -0.02em; }
+    .stat-lbl { font-size: 0.9rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em; }
+    
+    .step-card { padding: 4rem 3.5rem; border: 1px solid var(--border); }
+    .step-num { 
+      width: 48px; height: 48px; background: var(--primary); color: white;
+      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; margin-bottom: 2rem; transform: rotate(-5deg);
+    }
+    
+    .portal-card {
+      padding: 5rem;
+      border: 1px solid var(--border);
+      position: relative;
+      background: white;
+    }
+    
+    .portal-card:hover { border-color: var(--primary); }
+    .portal-card h3 { font-size: 2.75rem; margin-bottom: 1.5rem; }
+    .portal-card p { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 3rem; max-width: 90%; }
+    
+    .portal-link { 
+      font-weight: 800; color: var(--primary); 
+      display: flex; align-items: center; gap: 10px; 
+      font-size: 1.2rem;
+    }
+    
+    @media (max-width: 768px) {
+      .stats-strip { grid-template-columns: 1fr; margin-top: 2rem; padding: 3rem; }
+      .hero { padding: 8rem 0; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a class="nav-brand" href="index.html">
+      <img src="assets/logo.png" alt="VolunteerBridge" class="logo-img">
+      Volunteer<span class="text-primary">Bridge</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="ngo.html">NGO Panel</a>
+      <a href="volunteer.html">Volunteer</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="match.html" class="nav-cta">Smart Match</a>
+    </div>
+    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('show')">
+      <i data-lucide="menu" id="menuIcon"></i>
+    </button>
+  </div>
+</nav>
+
+<header class="hero ani-fade-up">
+  <div class="container">
+    <div class="hero-badge">
+      <i data-lucide="award" style="width:18px"></i> Google Solution Challenge 2026 Nominee
+    </div>
+    <h1>Strategic Impact,<br/><span>Better Communities.</span></h1>
+    <p>The OS for good. We leverage real-time data to bridge the gap between grassroots needs and local skilled expertise.</p>
+    <div class="hero-cta">
+      <a href="ngo.html" class="btn btn-primary"><i data-lucide="plus-circle" style="width:20px"></i> Report a Need</a>
+      <a href="volunteer.html" class="btn btn-secondary" style="backdrop-filter: blur(10px); background: rgba(255,255,255,0.2); border: 2px solid white; color: white;">Join as Volunteer</a>
+    </div>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container">
+    <div class="stats-strip ani-fade-up">
+      <div class="stat-item">
+        <span class="stat-val" id="liveNeeds">12</span>
+        <span class="stat-lbl">Active Reports</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val" id="liveVols">48</span>
+        <span class="stat-lbl">Qualified Heroes</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-val" id="liveImpact">6</span>
+        <span class="stat-lbl">Localities Reached</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div style="text-align: center; margin-bottom: 6rem;">
+      <h2 style="font-size: 3.5rem; margin-bottom: 1.5rem;">The Architecture of Aid</h2>
+      <p style="color: var(--text-muted); font-size: 1.35rem; max-width: 700px; margin: 0 auto;">Our three-pillar engine ensures that every hour of help is applied where it generates the most value.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="card step-card ani-fade-up" style="animation-delay: 0.1s;">
+        <div class="step-num">01</div>
+        <h3 style="font-size: 1.75rem; margin-bottom: 1.5rem; font-family: 'DM Sans', sans-serif; font-weight: 800;">Precise Signals</h3>
+        <p style="color: var(--text-muted); font-size: 1.1rem;">NGOs deploy granular data points about local crises, enabling a surgical response instead of blind help.</p>
+      </div>
+      <div class="card step-card ani-fade-up" style="animation-delay: 0.2s;">
+        <div class="step-num">02</div>
+        <h3 style="font-size: 1.75rem; margin-bottom: 1.5rem; font-family: 'DM Sans', sans-serif; font-weight: 800;">Skilled Inventory</h3>
+        <p style="color: var(--text-muted); font-size: 1.1rem;">We don't just find hands — we find expertise. Our network categorizes skills to match specialized needs.</p>
+      </div>
+      <div class="card step-card ani-fade-up" style="animation-delay: 0.3s;">
+        <div class="step-num">03</div>
+        <h3 style="font-size: 1.75rem; margin-bottom: 1.5rem; font-family: 'DM Sans', sans-serif; font-weight: 800;">AI Optimization</h3>
+        <p style="color: var(--text-muted); font-size: 1.1rem;">A custom allocation model analyzes proximity, urgency, and capability to suggest the perfect match in seconds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background: #f8fafc;">
+  <div class="container">
+    <div class="grid grid-2">
+      <div class="card portal-card ani-fade-up">
+        <h3 style="color: var(--primary);">For NGOs</h3>
+        <p>Access high-fidelity reporting tools and claim the resources your mission requires to succeed.</p>
+        <a href="ngo.html" class="portal-link">NGO Access <i data-lucide="arrow-right" style="width:22px"></i></a>
+      </div>
+      <div class="card portal-card ani-fade-up" style="animation-delay: 0.1s;">
+        <h3 style="color: var(--secondary);">For You</h3>
+        <p>Your talent is a resource. We'll connect you with opportunities where your specific skills can save the day.</p>
+        <a href="volunteer.html" class="portal-link" style="color: var(--secondary);">Start Helping <i data-lucide="arrow-right" style="width:22px"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <h2>Volunteer<span>Bridge</span></h2>
+        <p>Expert-led community resource allocation. Built for the Google Solution Challenge 2026.</p>
+      </div>
+      <div class="footer-links">
+        <h3>Ecosystem</h3>
+        <ul>
+          <li><a href="ngo.html">Mission Panel</a></li>
+          <li><a href="volunteer.html">Volunteer Network</a></li>
+          <li><a href="dashboard.html">Impact Analytics</a></li>
+          <li><a href="match.html">Smart Dispatch</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h3>Resources</h3>
+        <ul>
+          <li><a href="#">Security Docs</a></li>
+          <li><a href="#">API Documentation</a></li>
+          <li><a href="#">Brand Assets</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 VolunteerBridge OS. All rights reserved.</span>
+      <div style="display:flex; gap:1.5rem;">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBmMZdC9WgVCnXAQb6Jvx_n_JmEHE3z2U8",
+    authDomain: "volunteerbridge-5a97c.firebaseapp.com",
+    projectId: "volunteerbridge-5a97c",
+    storageBucket: "volunteerbridge-5a97c.firebasestorage.app",
+    messagingSenderId: "510303137686",
+    appId: "1:510303137686:web:00b136908afa7b48a477b7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  async function loadHomeStats() {
+    try {
+      const needs = await getDocs(collection(db, "needs"));
+      const vols = await getDocs(collection(db, "volunteers"));
+      
+      const uniqueLocs = new Set();
+      needs.forEach(d => uniqueLocs.add(d.data().location));
+
+      animateCounter("liveNeeds", needs.size || 12);
+      animateCounter("liveVols", vols.size || 48);
+      animateCounter("liveImpact", uniqueLocs.size || 6);
+    } catch (e) {
+      console.warn("DB offline. Using fallback simulation.");
+    }
+  }
+
+  function animateCounter(id, target) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let current = 0;
+    const duration = 2000;
+    const increment = target / (duration / 16);
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) { el.textContent = target; clearInterval(timer); }
+      else { el.textContent = Math.floor(current); }
+    }, 16);
+  }
+
+  loadHomeStats();
+  if (window.lucide) window.lucide.createIcons();
+</script>
+
+</body>
+</html>
+
