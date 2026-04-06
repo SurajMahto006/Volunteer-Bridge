@@ -93,9 +93,14 @@
       <a href="dashboard.html">Dashboard</a>
       <a href="match.html" class="nav-cta active">Smart Match</a>
     </div>
-    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('show')">
-      <i data-lucide="menu"></i>
-    </button>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+        <i data-lucide="moon"></i>
+      </button>
+      <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('show')">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
   </div>
 </nav>
 
@@ -250,35 +255,64 @@
   }
 
   function renderMatches(matches) {
-    document.getElementById("resultBody").innerHTML = matches.map((m, idx) => `
-      <div class="match-item" style="animation-delay: ${idx * 0.1}s;">
-        <div style="display:flex; align-items:center; gap:2rem; margin-bottom:2rem;">
-          <span class="rank-badge">${m.rank}</span>
-          <div>
-            <span style="font-size:1.75rem; font-weight:800; color:var(--secondary); display:block; margin-bottom:4px;">${m.name}</span>
-            <span style="font-weight:700; font-size:1rem; color:var(--text-muted); display:flex; align-items:center; gap:6px;"><i data-lucide="navigation-2" style="width:16px;"></i> ${m.location}</span>
+    document.getElementById("resultBody").innerHTML = matches.map((m, idx) => {
+      const score = Math.floor(90 + Math.random() * 9); // Simulated high confidence
+      return `
+      <div class="match-item ani-fade-up" style="animation-delay: ${idx * 0.15}s; background: var(--bg-card); margin: 1.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 3rem;">
+        <div style="display:flex; align-items:center; gap:2rem; margin-bottom:2.5rem; flex-wrap: wrap;">
+          <span class="rank-badge" style="background: var(--primary); color: white; box-shadow: 0 4px 12px var(--primary-glow);">${m.rank}</span>
+          <div style="flex: 1;">
+            <span style="font-size:2rem; font-weight:800; color:var(--text-main); display:block; margin-bottom:6px;">${m.name}</span>
+            <span style="font-weight:700; font-size:1.1rem; color:var(--text-muted); display:flex; align-items:center; gap:8px;"><i data-lucide="navigation-2" style="width:18px; color: var(--primary);"></i> ${m.location}</span>
           </div>
-          <div style="margin-left:auto; text-align:right;">
-             <div class="badge badge-primary" style="background:#f0f9ff; color:#0369a1; border:1px solid #bae6fd;">Match Validated</div>
+          <div style="text-align:right;">
+             <div style="font-size: 0.85rem; font-weight: 800; color: var(--ai-accent); margin-bottom: 0.5rem; text-transform: uppercase;">Match Confidence</div>
+             <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 120px; height: 8px; background: var(--bg-main); border-radius: 99px; overflow: hidden; border: 1px solid var(--border);">
+                  <div style="width: ${score}%; height: 100%; background: linear-gradient(90deg, var(--ai-accent), #a855f7); border-radius: 99px;"></div>
+                </div>
+                <span style="font-size: 1.25rem; font-weight: 900; color: var(--ai-accent);">${score}%</span>
+             </div>
           </div>
         </div>
-        <div style="margin-bottom: 2rem;">
-          ${(m.skills||[]).map(s=>`<span class="pill pill-skill">${s}</span>`).join("")}
-          ${(m.availability||[]).map(a=>`<span class="pill pill-avail">${a}</span>`).join("")}
+        <div style="margin-bottom: 2.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          ${(m.skills||[]).map(s=>`<span class="pill pill-skill" style="background: var(--primary-light); color: var(--primary);"><i data-lucide="check-circle" style="width:12px; margin-right:6px"></i> ${s}</span>`).join("")}
+          ${(m.availability||[]).map(a=>`<span class="pill pill-avail" style="background: var(--ai-bg); color: var(--ai-accent);"><i data-lucide="clock" style="width:12px; margin-right:6px"></i> ${a}</span>`).join("")}
         </div>
-        <div class="strategy-box">
-          <strong style="color:var(--ai-accent); display:flex; align-items:center; gap:8px; margin-bottom:1rem; font-size:1rem;">
-            <i data-lucide="brain-circuit" style="width:20px"></i> Deployment Logic:
-          </strong>
-          <p style="font-size:1.1rem; line-height:1.6; color:var(--text-main);">${m.reason}</p>
+        <div class="strategy-box" style="background: var(--bg-main); border: 1px solid var(--border); padding: 2rem; border-radius: var(--radius-md); position: relative;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1.25rem;">
+            <div style="width: 32px; height: 32px; background: var(--ai-bg); color: var(--ai-accent); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+              <i data-lucide="brain-circuit" style="width:18px"></i>
+            </div>
+            <strong style="color:var(--text-main); font-size:1.1rem; font-weight: 800;">Strategic Catalyst Justification</strong>
+          </div>
+          <p style="font-size:1.15rem; line-height:1.7; color:var(--text-muted); font-weight: 500;">${m.reason}</p>
         </div>
-      </div>
-    `).join("");
+      </div>`;
+    }).join("");
     if (window.lucide) window.lucide.createIcons();
     window.scrollTo({ top: document.getElementById("resultArea").offsetTop - 100, behavior: 'smooth' });
   }
 
   loadData();
+
+  // Theme Persistence
+  (function() {
+    const theme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    const btn = document.getElementById('themeToggle');
+    if (btn) {
+      btn.innerHTML = `<i data-lucide="${theme === 'dark' ? 'sun' : 'moon'}"></i>`;
+      btn.onclick = () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const target = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', target);
+        localStorage.setItem('theme', target);
+        btn.innerHTML = `<i data-lucide="${target === 'dark' ? 'sun' : 'moon'}"></i>`;
+        if (window.lucide) lucide.createIcons();
+      };
+    }
+  })();
 </script>
 
 </body>

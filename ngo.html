@@ -64,9 +64,14 @@
       <a href="dashboard.html">Dashboard</a>
       <a href="match.html" class="nav-cta">Smart Match</a>
     </div>
-    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('show')">
-      <i data-lucide="menu"></i>
-    </button>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <button class="theme-toggle" id="themeToggle" title="Toggle Theme">
+        <i data-lucide="moon"></i>
+      </button>
+      <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('show')">
+        <i data-lucide="menu"></i>
+      </button>
+    </div>
   </div>
 </nav>
 
@@ -279,6 +284,24 @@
 
   loadEntries();
   if (window.lucide) window.lucide.createIcons();
+
+  // Theme Persistence
+  (function() {
+    const theme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    const btn = document.getElementById('themeToggle');
+    if (btn) {
+      btn.innerHTML = `<i data-lucide="${theme === 'dark' ? 'sun' : 'moon'}"></i>`;
+      btn.onclick = () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const target = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', target);
+        localStorage.setItem('theme', target);
+        btn.innerHTML = `<i data-lucide="${target === 'dark' ? 'sun' : 'moon'}"></i>`;
+        if (window.lucide) lucide.createIcons();
+      };
+    }
+  })();
 </script>
 
 </body>
