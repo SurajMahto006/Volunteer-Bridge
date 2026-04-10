@@ -1,93 +1,69 @@
-# VolunteerBridge — Setup Guide
+# VolunteerBridge — Building Bridges, Strengthening Community
 
-## Your 5 files
-- index.html       → Landing page
-- ngo.html         → NGO data entry form
-- volunteer.html   → Volunteer registration
-- dashboard.html   → Needs dashboard + charts
-- match.html       → AI volunteer matching
+![VolunteerBridge Logo](assets/logo.png)
+
+> **Where local needs find local hearts.** VolunteerBridge is a smart community platform designed for the **Google Solution Challenge 2026**. We connect neighbors with neighbors to solve local needs together in real-time, transforming technical coordination into human-centric community building.
 
 ---
 
-## Step 1 — Set up Firebase (free database)
+## 🌟 The Vision
+In many communities, the gap between a "need" and a "helping hand" is often just a lack of connection. VolunteerBridge acts as a digital infrastructure—a bridge—that maps local NGO requirements to the unique talents of resident neighbors. By humanizing the data and smart-matching skills to situations, we build safer, smarter, and more resilient villages.
 
-1. Go to https://console.firebase.google.com
-2. Click "Add project" → name it "volunteer-bridge" → click through
-3. Click the </> (web) icon → name it "webapp" → click Register
-4. Copy the firebaseConfig object shown on screen
+## 🚀 Key Modules
 
-It looks like this:
-  const firebaseConfig = {
-    apiKey: "AIza...",
-    authDomain: "your-project.firebaseapp.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project.appspot.com",
-    messagingSenderId: "123456",
-    appId: "1:123456:web:abcdef"
-  };
+| Module | Purpose | Keywords |
+| :--- | :--- | :--- |
+| **Helping Hub** | NGO mission reporting & data entry | *Report a Need, NGO Panel* |
+| **Bridge Builders** | Volunteer skill-based registration | *Join as Volunteer, Neighbor* |
+| **Community Map**| Real-time impact & urgency analytics | *Dashboard, Charts, Trends* |
+| **Smart Match** | AI-powered skill-to-need alignment | *Find Help, Ranked Results* |
 
-5. Paste this config into ALL 5 html files
-   (search for "YOUR_API_KEY" in each file and replace the whole config block)
-
-6. In Firebase console → Firestore Database → Create database
-   → Start in TEST MODE → Choose a region → Done
+## 🛠️ Tech Stack
+- **Core**: Semantic HTML5, Vanilla CSS3 (Modern Nature Design System), JavaScript (ES6+)
+- **Backend**: **Firebase Firestore** for real-time data persistence and live state updates.
+- **Intelligence**: **Anthropic Claude API** for intelligent, context-aware volunteer ranking.
+- **Analytics**: **Chart.js** for visualizing community impact and urgency levels.
+- **Micro-Interactions**: **Lucide Icons** & CSS Grid/Flexbox for a premium, responsive UX.
 
 ---
 
-## Step 2 — Get your Anthropic API key (for AI matching)
+## ⚙️ Quick Start Guide
 
-1. Go to https://console.anthropic.com
-2. Sign up for a free account
-3. Go to API Keys → Create Key → Copy it
-4. In match.html, find this line in the fetch() call:
-      headers: { "Content-Type": "application/json" },
-   And ADD your API key:
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": "YOUR_ANTHROPIC_KEY_HERE",
-        "anthropic-version": "2023-06-01",
-        "anthropic-dangerous-direct-browser-access": "true"
-      },
+### 1. Firebase Integration
+1.  Create a project in the [Firebase Console](https://console.firebase.google.com).
+2.  Enable **Firestore Database** in Test Mode.
+3.  Register a Web App and copy your `firebaseConfig`.
+4.  Replace the placeholder config in `index.html`, `ngo.html`, `volunteer.html`, `dashboard.html`, and `match.html`.
 
-Note: For the hackathon demo, direct browser access is fine.
-      In production, you'd use a backend server to protect your key.
+### 2. AI Smart Matching Setup
+1.  Obtain an API key from [Anthropic Console](https://console.anthropic.com).
+2.  In `match.html`, locate the headers in the `fetch()` call and add your key:
+    ```javascript
+    "x-api-key": "YOUR_ANTHROPIC_KEY_HERE",
+    "anthropic-version": "2023-06-01",
+    "anthropic-dangerous-direct-browser-access": "true"
+    ```
 
----
-
-## Step 3 — Run locally with VS Code
-
-1. Open VS Code → File → Open Folder → select volunteer-bridge folder
-2. Install the "Live Server" extension (search in Extensions panel)
-3. Right-click index.html → "Open with Live Server"
-4. Your app opens at http://127.0.0.1:5500
+### 3. Local Development
+1.  Open the project in VS Code.
+2.  Use the **Live Server** extension to launch `index.html`.
+3.  Navigate to `http://127.0.0.1:5500`.
 
 ---
 
-## What each page does (for your demo video / pitch)
-
-| Page            | What to show judges                                      |
-|-----------------|----------------------------------------------------------|
-| index.html      | Clean landing, live stats pulled from Firebase           |
-| ngo.html        | Submit a need → it appears in the table instantly        |
-| volunteer.html  | Register with skill tags → appears in table instantly    |
-| dashboard.html  | Bar chart + doughnut + filter by urgency/category        |
-| match.html      | Click a need → AI returns ranked volunteers with reasons |
-
----
-
-## Collections in Firestore
-
-needs (written by ngo.html, read by dashboard.html + match.html)
-  - title, category, location, affected, ngoName, description, urgency, createdAt
-
-volunteers (written by volunteer.html, read by match.html)
-  - name, phone, location, experience, skills[], availability[], about, createdAt
+## 📂 Project Structure
+- `index.html`: Premium landing page with live community stats.
+- `ngo.html`: The Helping Hub for NGO mission reporting.
+- `volunteer.html`: Registration portal for community Bridge Builders.
+- `dashboard.html`: The Community Map showing live impact analytics.
+- `match.html`: Intelligence layer for AI-driven volunteer matching.
+- `app.js` & `style.css`: Core logic and the "Modern Nature" design system.
+- `seed_demo.js`: Utility script to populate the database with demo missions.
 
 ---
 
-## Judging criteria checklist
+## 🏆 Google Solution Challenge 2026
+This project is built with passion and precision to address the UN Sustainable Development Goals, focusing on **Sustainable Cities and Communities (Goal 11)** and **Partnerships for the Goals (Goal 17)**.
 
-Technical Merit (40%)   ✓ Firebase real-time DB, Chart.js, Anthropic AI API
-Innovation (25%)        ✓ AI-powered matching with skill/location analysis
-Cause Alignment (25%)   ✓ Directly solves the NGO volunteer coordination problem
-UX (10%)                ✓ Clean UI, skill tags, urgency pills, responsive design
+**Connecting hearts, crossing bridges.**
+
