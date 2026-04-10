@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NGO Panel — Mission Control | VolunteerBridge</title>
+  <title>Community Support Hub | VolunteerBridge</title>
   
   <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
@@ -47,6 +47,39 @@
     .header-box p { font-size: 1.25rem; color: var(--text-muted); }
 
     .form-card { max-width: 900px; margin: 0 auto 5rem; }
+
+    /* OCR Scanner Styles */
+    .scan-paper-btn {
+      background: linear-gradient(135deg, var(--primary), #059669);
+      color: white; border: none; padding: 0.75rem 1.5rem;
+      border-radius: 14px; font-weight: 800; font-size: 0.9rem;
+      cursor: pointer; display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 10px 20px -5px rgba(21, 128, 61, 0.4);
+      transition: var(--transition);
+    }
+    .scan-paper-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 15px 30px -5px rgba(21, 128, 61, 0.5); }
+    
+    .scanning-overlay {
+      position: fixed; inset: 0; background: rgba(2, 6, 23, 0.85);
+      backdrop-filter: blur(12px); z-index: 3000; display: none;
+      flex-direction: column; align-items: center; justify-content: center;
+      color: white; text-align: center;
+    }
+    .scanning-overlay.show { display: flex; animation: fadeIn 0.4s ease; }
+    
+    .neural-loader {
+      width: 120px; height: 120px; border-radius: 50%;
+      border: 4px solid var(--primary); border-top-color: transparent;
+      animation: spin 1s linear infinite; position: relative;
+      margin-bottom: 2rem;
+    }
+    .neural-loader::after {
+      content: ''; position: absolute; inset: 15px; border-radius: 50%;
+      border: 4px solid var(--accent); border-bottom-color: transparent;
+      animation: spin 2s linear reverse infinite;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   </style>
 </head>
 <body>
@@ -77,12 +110,18 @@
 
 <div class="container">
   <header class="header-box ani-fade-up">
-    <h1>Mission Control</h1>
-    <p>Deploy localized data signals to alert our network of skilled professionals to your organization's emerging needs.</p>
+    <h1>Community Support Hub</h1>
+    <p>Post a neighborhood need or scan paper-based requests. Your community is here to listen and help.</p>
   </header>
 
   <div class="card form-card ani-fade-up" style="animation-delay: 0.1s;">
-    <h2 style="margin-bottom: 2.5rem; font-size: 2rem; border-bottom: 2px solid var(--bg-main); padding-bottom: 1rem;">Report New Case</h2>
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2.5rem; border-bottom: 2px solid var(--bg-main); padding-bottom: 1.5rem; gap: 2rem; flex-wrap: wrap;">
+      <h2 style="font-size: 2rem; margin: 0;">Request Help</h2>
+      <button type="button" class="scan-paper-btn" onclick="document.getElementById('scanInput').click()">
+        <i data-lucide="scan-eye"></i> Scan Paper Request
+      </button>
+      <input type="file" id="scanInput" style="display: none;" accept="image/*" onchange="handleScan(event)" />
+    </div>
     <form id="needForm">
       <div class="form-group">
         <label for="title">Title of Requirement <span style="color:var(--danger)">*</span></label>
@@ -91,7 +130,7 @@
 
       <div class="grid grid-2">
         <div class="form-group">
-          <label for="category">Mission Category <span style="color:var(--danger)">*</span></label>
+          <label for="category">Category <span style="color:var(--danger)">*</span></label>
           <select id="category" class="input-styled" required>
             <option value="" disabled selected>Select category</option>
             <option value="Food">Food & Nutrition</option>
@@ -105,14 +144,14 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="location">Focal Location <span style="color:var(--danger)">*</span></label>
+          <label for="location">Area <span style="color:var(--danger)">*</span></label>
           <input type="text" id="location" class="input-styled" placeholder="City or District" required />
         </div>
       </div>
 
       <div class="grid grid-2">
         <div class="form-group">
-          <label for="affected">Impact Scope <span style="text-transform:none; opacity:0.6; font-weight:400;">(Est. People)</span></label>
+          <label for="affected">People affected <span style="text-transform:none; opacity:0.6; font-weight:400;">(Estimated)</span></label>
           <input type="number" id="affected" class="input-styled" placeholder="e.g. 500" min="1" />
         </div>
         <div class="form-group">
@@ -122,7 +161,7 @@
       </div>
 
       <div class="form-group">
-        <label for="description">Strategic Details</label>
+        <label for="description">More Details</label>
         <textarea id="description" class="input-styled" placeholder="Describe the specific expertise or equipment required for this mission..." rows="4"></textarea>
       </div>
 
@@ -144,20 +183,22 @@
         </div>
       </div>
 
+      <input type="hidden" id="status" value="active" />
+
       <button class="btn btn-primary" type="submit" id="submitBtn" style="width:100%; padding: 1.5rem; font-size: 1.25rem; font-weight: 800;">
-        <i data-lucide="send" style="width: 22px;"></i> Dispatch Mission Signal
+        <i data-lucide="send" style="width: 22px;"></i> Post Request for Help
       </button>
     </form>
   </div>
 
   <div class="ani-fade-up" style="animation-delay: 0.2s; padding-bottom: 5rem;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2.5rem;">
-      <h2 style="font-size: 2.25rem;">Active Signal Log</h2>
+      <h2 style="font-size: 2.25rem;">Recent Help Requests</h2>
       <div class="badge badge-primary" style="font-size: 0.9rem;">Live Feed</div>
     </div>
     <div class="table-wrapper premium-card" style="padding: 0; overflow: hidden; border: 1px solid var(--border);">
       <div id="entriesContainer">
-        <div style="text-align: center; padding: 8rem; color: var(--text-muted);"><div class="spinner" style="border-top-color:var(--primary); margin: 0 auto 1.5rem;"></div><p style="font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.8rem;">Syncing encrypted mission data...</p></div>
+        <div style="text-align: center; padding: 8rem; color: var(--text-muted);"><div class="spinner" style="border-top-color:var(--primary); margin: 0 auto 1.5rem;"></div><p style="font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.8rem;">Syncing community history...</p></div>
       </div>
     </div>
   </div>
@@ -175,7 +216,7 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBmMZdC9WgVCnXAQb6Jvx_n_JmEHE3z2U8",
@@ -214,10 +255,12 @@
         const d = doc.data();
         const badgeClass = `badge-${d.urgency}`;
         const urgencyLabel = d.urgency === 'high' ? 'CRITICAL' : (d.urgency === 'medium' ? 'PRIORITY' : 'STANDARD');
+        const isResolved = d.status === 'resolved';
+        
         rows += `
-          <tr>
+          <tr style="${isResolved ? 'opacity: 0.6; grayscale: 0.5;' : ''}">
             <td style="padding: 2rem 1.25rem;">
-              <div style="font-weight: 800; color: var(--secondary); font-size: 1.1rem; margin-bottom: 0.25rem;">${d.title}</div>
+              <div style="font-weight: 800; color: var(--secondary); font-size: 1.1rem; margin-bottom: 0.25rem; ${isResolved ? 'text-decoration: line-through;' : ''}">${d.title}</div>
               <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;"><i data-lucide="tag" style="width:12px"></i> ${d.category}</div>
             </td>
             <td>
@@ -225,10 +268,23 @@
                 <i data-lucide="map-pin" style="width:16px; color:var(--primary);"></i> ${d.location}
               </div>
             </td>
-            <td><span class="badge ${badgeClass}">${urgencyLabel}</span></td>
+            <td>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <span class="badge ${badgeClass}">${urgencyLabel}</span>
+                ${isResolved ? '<span class="badge badge-success" style="font-size:0.65rem;">RESOLVED</span>' : '<span class="badge badge-primary" style="font-size:0.65rem;">ACTIVE</span>'}
+              </div>
+            </td>
             <td>
               <div style="font-weight: 700; color: var(--text-main);">${d.ngoName}</div>
               <div style="font-size: 0.8rem; color: var(--text-muted);">${d.affected ? d.affected + ' people impacted' : ''}</div>
+            </td>
+            <td>
+              ${!isResolved ? `
+                <button class="btn btn-secondary" onclick="resolveSignal('${doc.id}')" style="padding: 0.5rem 1rem; font-size: 0.75rem;">
+                  <i data-lucide="check-check" style="width:14px"></i> Resolve
+                </button>` : `
+                <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary);">Closed</span>
+              `}
             </td>
           </tr>`;
       });
@@ -237,10 +293,11 @@
         <table>
           <thead>
             <tr>
-              <th>Need Signal</th>
-              <th>Deployment Area</th>
-              <th>Urgency</th>
-              <th>Reporting Body</th>
+              <th>What's Needed</th>
+              <th>Area</th>
+              <th>Status</th>
+              <th>Who Reported</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -255,7 +312,7 @@
     const originalContent = btn.innerHTML;
     
     btn.disabled = true;
-    btn.innerHTML = `<span class="spinner"></span> Encrypting & Sending...`;
+    btn.innerHTML = `<span class="spinner"></span> Sending Request...`;
 
     try {
       await addDoc(collection(db, "needs"), {
@@ -266,6 +323,7 @@
         ngoName: document.getElementById("ngoName").value.trim(),
         description: document.getElementById("description").value.trim(),
         urgency: document.querySelector('input[name="urgency"]:checked').value,
+        status: "active",
         createdAt: serverTimestamp()
       });
 
@@ -285,6 +343,20 @@
   loadEntries();
   if (window.lucide) window.lucide.createIcons();
 
+  window.resolveSignal = async function(id) {
+    if (!confirm("Are you sure this community need has been resolved?")) return;
+    try {
+      await updateDoc(doc(db, "needs", id), {
+        status: "resolved",
+        resolvedAt: serverTimestamp()
+      });
+      showToast("Mission loop closed successfully!");
+      loadEntries();
+    } catch (e) {
+      showToast("Resolution failed.", "error");
+    }
+  };
+
   // Theme Persistence
   (function() {
     const theme = localStorage.getItem('theme') || 'light';
@@ -302,7 +374,97 @@
       };
     }
   })();
+
+  // --- VISION-TO-SIGNAL (OCR) LOGIC ---
+  const GEMINI_KEY = "AIzaSyCbFAIA678ZQkXFBnlsZPq4jfH1pdmre1Q";
+
+  window.handleScan = async function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const overlay = document.getElementById("scanningOverlay");
+    overlay.classList.add("show");
+
+    try {
+      const base64Data = await fileToGenerativePart(file);
+      const prompt = `
+        Analyze this community survey/field report image. 
+        It might be in a local language—detect it and translate to English if necessary.
+        Extract the following data into a clean JSON object:
+        {
+          "title": "Clear headline of the need",
+          "category": "One of: Food, Medical, Education, Shelter, Water, Livelihood, Disaster",
+          "location": "Specific city/area mentioned",
+          "affected": 123 (number of people),
+          "description": "Specific details about what is needed",
+          "urgency": "low, medium, or high"
+        }
+        Return ONLY JSON. Give the title a warm, helpful summary.
+      `;
+
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { text: prompt },
+              { inline_data: base64Data }
+            ]
+          }]
+        })
+      });
+
+      const data = await response.json();
+      const text = data.candidates[0].content.parts[0].text;
+      const cleanJson = text.replace(/```json|```/g, "").trim();
+      const result = JSON.parse(cleanJson);
+
+      autoFillForm(result);
+      showToast("Data extracted successfully! Please verify.");
+    } catch (err) {
+      console.error("OCR Error:", err);
+      showToast("Failed to parse report. Please enter manually.", "error");
+    } finally {
+      overlay.classList.remove("show");
+      event.target.value = ""; // Reset input
+    }
+  };
+
+  async function fileToGenerativePart(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result.split(',')[1];
+        resolve({ mime_type: file.type, data: base64 });
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function autoFillForm(data) {
+    if (data.title) document.getElementById("title").value = data.title;
+    if (data.category) document.getElementById("category").value = data.category;
+    if (data.location) document.getElementById("location").value = data.location;
+    if (data.affected) document.getElementById("affected").value = data.affected;
+    if (data.description) document.getElementById("description").value = data.description;
+    
+    if (data.urgency) {
+      const radio = document.getElementById(`u-${data.urgency.toLowerCase()}`);
+      if (radio) radio.checked = true;
+    }
+    
+    // Trigger visual updates
+    if (window.lucide) lucide.createIcons();
+  }
 </script>
+
+<div id="scanningOverlay" class="scanning-overlay">
+  <div class="neural-loader"></div>
+  <h2 style="color: white; font-size: 2.5rem; margin-bottom: 1rem;">Reading the Request</h2>
+  <p style="font-size: 1.25rem; opacity: 0.8; max-width: 400px; margin: 0 auto;">We're looking over the printed request to make it easier for our community to help...</p>
+</div>
 
 </body>
 </html>

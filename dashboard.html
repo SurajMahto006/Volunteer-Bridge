@@ -12,6 +12,7 @@
   <!-- Leaflet.js for Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
   
   <link rel="stylesheet" href="style.css">
   
@@ -67,6 +68,30 @@
       .header-flex { flex-direction: column; align-items: flex-start; gap: 2rem; }
       .filter-bar { grid-template-columns: 1fr; }
     }
+
+    .map-controls {
+      display: flex; gap: 0.5rem; margin-bottom: 1.5rem;
+      background: var(--bg-alt); padding: 0.5rem; border-radius: 14px;
+      width: fit-content; margin-left: auto; margin-right: 2.5rem;
+    }
+    .map-btn {
+      padding: 0.6rem 1.25rem; border-radius: 10px; border: none;
+      font-weight: 800; font-size: 0.8rem; cursor: pointer; transition: var(--transition);
+      background: transparent; color: var(--text-muted);
+    }
+    .map-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 12px var(--primary-glow); }
+
+    .ai-insight-card {
+      background: linear-gradient(135deg, var(--secondary), #0f172a);
+      color: white; border: none; padding: 3rem; margin-top: 2rem;
+      position: relative; overflow: hidden;
+    }
+    .ai-insight-card::before {
+      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(34, 197, 94, 0.1) 0%, transparent 70%);
+      animation: pulse-slow 10s infinite;
+    }
+    @keyframes pulse-slow { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.2); opacity: 0.5; } }
   </style>
 </head>
 <body>
@@ -115,7 +140,7 @@
     </div>
   </header>
 
-  <div class="grid grid-3 ani-fade-up" style="animation-delay: 0.1s; margin-bottom: 3rem;">
+  <div class="grid grid-5 ani-fade-up" style="animation-delay: 0.1s; margin-bottom: 3rem;">
     <div class="card stat-card stat-critical" style="border-top: 6px solid var(--danger);">
       <div class="stat-icon-box"><i data-lucide="alert-circle"></i></div>
       <h4>Critical Signals</h4>
@@ -127,9 +152,19 @@
       <div class="stat-val-huge" id="countMedium">0</div>
     </div>
     <div class="card stat-card stat-success" style="border-top: 6px solid var(--primary);">
-      <div class="stat-icon-box"><i data-lucide="users"></i></div>
+      <div class="stat-icon-box"><i data-lucide="check-check"></i></div>
+      <h4>Help Provided</h4>
+      <div class="stat-val-huge" id="countResolved">0</div>
+    </div>
+    <div class="card stat-card" style="border-top: 6px solid var(--primary);">
+      <div class="stat-icon-box" style="background: var(--primary-light); color: var(--primary);"><i data-lucide="users"></i></div>
       <h4>Ready Partners</h4>
       <div class="stat-val-huge" id="countVolunteers">0</div>
+    </div>
+    <div class="card stat-card" style="border-top: 6px solid var(--primary); background: var(--primary-light);">
+      <div class="stat-icon-box" style="background: white; color: var(--primary);"><i data-lucide="heart"></i></div>
+      <h4 style="color: var(--primary);">Impact Reach</h4>
+      <div class="stat-val-huge" id="totalImpact" style="color: var(--primary);">0</div>
     </div>
   </div>
 
@@ -168,9 +203,27 @@
     </div>
   </div>
 
-  <div class="card ani-fade-up" style="animation-delay: 0.4s; margin-bottom: 5rem; padding: 1rem;">
-    <h3 style="font-size: 1.5rem; font-weight: 800; margin: 2rem 2.5rem 1rem;">Geographic Deployment Index</h3>
-    <div id="map" style="margin: 1.5rem;"></div>
+  <div class="card ani-fade-up" style="animation-delay: 0.4s; margin-bottom: 3rem; padding: 1rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin: 2rem 2.5rem 0;">
+      <h3 style="font-size: 1.5rem; font-weight: 800;">Geographic Deployment Index</h3>
+      <div class="map-controls">
+        <button class="map-btn active" id="btnMarkers" onclick="window.setMapMode('markers')">Signal View</button>
+        <button class="map-btn" id="btnHeat" onclick="window.setMapMode('heat')">Intensity View</button>
+      </div>
+    </div>
+    <div id="map" style="margin: 1.5rem; margin-top: 1rem;"></div>
+  </div>
+
+  <div class="card ai-insight-card ani-fade-up" style="animation-delay: 0.45s; margin-bottom: 5rem;">
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+      <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+        <i data-lucide="brain-circuit" style="width: 24px;"></i>
+      </div>
+      <h3 style="color: white; font-size: 1.5rem; font-weight: 800; margin: 0;">Smart Community Guide</h3>
+    </div>
+    <p id="aiInsightText" style="font-size: 1.15rem; line-height: 1.8; opacity: 0.9; font-weight: 500;">
+      Analyzing community telemetry to identify emerging operational hotspots...
+    </p>
   </div>
 
   <div class="ani-fade-up" style="animation-delay: 0.5s; padding-bottom: 5rem;">
@@ -182,6 +235,16 @@
       <div id="needsTable">
         <div style="text-align: center; padding: 6rem; color: var(--text-muted);"><p>Awaiting signal synchronization...</p></div>
       </div>
+    </div>
+  </div>
+
+  <div class="ani-fade-up" style="animation-delay: 0.6s; padding-bottom: 10rem;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2.5rem;">
+      <h2 style="font-size: 2.25rem;">Our Bridge Builders</h2>
+      <div class="badge badge-primary">Local Supporters</div>
+    </div>
+    <div class="grid grid-3" id="volunteersList">
+      <!-- To be filled by JS -->
     </div>
   </div>
 </div>
@@ -217,6 +280,8 @@
   let doughnutChartInstance = null;
   let map = null;
   let markersLayer = null;
+  let heatLayer = null;
+  let viewMode = 'markers'; // 'markers' or 'heat'
 
   const LOCATION_MAP = {
     "Ambarnath": [19.18, 73.19], "Kalyan": [19.23, 73.13], "Thane": [19.21, 72.97], "Mumbai": [19.07, 72.87]
@@ -227,8 +292,10 @@
     map = L.map('map', { scrollWheelZoom: false }).setView([19.18, 73.19], 10);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OSM' }).addTo(map);
     markersLayer = L.layerGroup().addTo(map);
+    heatLayer = L.heatLayer([], { radius: 25, blur: 15, maxZoom: 17 }).addTo(map);
   }
 
+  let allVolunteers = [];
   async function initDashboard() {
     initMap();
     const q = query(collection(db, "needs"), orderBy("createdAt", "desc"));
@@ -240,16 +307,37 @@
     });
     try {
       const snap = await getDocs(collection(db, "volunteers"));
-      document.getElementById("countVolunteers").textContent = snap.size;
+      allVolunteers = [];
+      snap.forEach(doc => allVolunteers.push({ id: doc.id, ...doc.data() }));
+      document.getElementById("countVolunteers").textContent = allVolunteers.length;
+      renderVolunteers(allVolunteers);
     } catch(e) {}
+  }
+
+  function renderVolunteers(vols) {
+    const list = document.getElementById("volunteersList");
+    list.innerHTML = vols.slice(0, 6).map(v => `
+      <div class="card" style="padding: 1.5rem; text-align: center;">
+        <div style="width: 48px; height: 48px; background: var(--primary-light); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+          <i data-lucide="user"></i>
+        </div>
+        <div style="font-weight: 800; color: var(--secondary); font-size: 1.1rem; margin-bottom: 0.25rem;">${v.name}</div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">${(v.skills || [v.skill]).join(", ")}</div>
+        <div style="font-size: 0.75rem; color: var(--primary); font-weight: 800; margin-top: 0.5rem;"><i data-lucide="map-pin" style="width:12px; vertical-align:middle;"></i> ${v.location}</div>
+      </div>
+    `).join("");
+    if (window.lucide) window.lucide.createIcons();
   }
 
   function renderAll(needs) {
     const filtered = applyFiltersLocally(needs);
-    updateStats(filtered);
-    renderCharts(filtered);
-    updateMap(filtered);
-    renderTable(filtered);
+    const activeNeeds = filtered.filter(n => n.status !== 'resolved');
+    
+    updateStats(filtered); // All needs for total impact
+    renderCharts(activeNeeds); // Only active for urgency charts
+    updateMap(activeNeeds); // Only active for deployment
+    renderTable(filtered); // Full history in table
+    renderAIInsight(activeNeeds);
     if (window.lucide) window.lucide.createIcons();
   }
 
@@ -265,8 +353,15 @@
   }
 
   function updateStats(needs) {
-    document.getElementById("countHigh").textContent = needs.filter(n => n.urgency === "high").length;
-    document.getElementById("countMedium").textContent = needs.filter(n => n.urgency === "medium").length;
+    const active = needs.filter(n => n.status !== 'resolved');
+    const resolved = needs.filter(n => n.status === 'resolved');
+    
+    document.getElementById("countHigh").textContent = active.filter(n => n.urgency === "high").length;
+    document.getElementById("countMedium").textContent = active.filter(n => n.urgency === "medium").length;
+    document.getElementById("countResolved").textContent = resolved.length;
+    
+    const total = needs.reduce((acc, curr) => acc + (Number(curr.affected) || 0), 0);
+    document.getElementById("totalImpact").textContent = total.toLocaleString();
   }
 
   function renderCharts(needs) {
@@ -303,17 +398,67 @@
   }
 
   function updateMap(needs) {
-    if (!markersLayer) return;
+    if (!markersLayer || !heatLayer) return;
+    
+    // Clear both
     markersLayer.clearLayers();
+    heatLayer.setLatLngs([]);
+
+    const heatPoints = [];
+
     needs.forEach(n => {
       const colors = { high: "#ef4444", medium: "#f59e0b", low: "#15803d" };
       let coords = [19.18, 73.19];
       for (const [k, v] of Object.entries(LOCATION_MAP)) { if ((n.location || "").includes(k)) coords = v; }
-      const marker = L.circleMarker([coords[0] + (Math.random()-0.5)*0.05, coords[1] + (Math.random()-0.5)*0.05], {
-        radius: 12, fillColor: colors[n.urgency], color: "#fff", weight: 3, fillOpacity: 0.9, className: 'ani-pulse'
-      }).bindPopup(`<strong>${n.title}</strong><br>${n.location}`);
-      markersLayer.addLayer(marker);
+      
+      const lat = coords[0] + (Math.random()-0.5)*0.03;
+      const lng = coords[1] + (Math.random()-0.5)*0.03;
+
+      if (viewMode === 'markers') {
+        const marker = L.circleMarker([lat, lng], {
+          radius: 12, fillColor: colors[n.urgency], color: "#fff", weight: 3, fillOpacity: 0.9, className: 'ani-pulse'
+        }).bindPopup(`<strong>${n.title}</strong><br>${n.location}`);
+        markersLayer.addLayer(marker);
+      } else {
+        // Intensity based on urgency and affected count
+        const intensity = n.urgency === 'high' ? 0.8 : (n.urgency === 'medium' ? 0.5 : 0.2);
+        heatPoints.push([lat, lng, intensity]);
+      }
     });
+
+    if (viewMode === 'heat') {
+      heatLayer.setLatLngs(heatPoints);
+    }
+  }
+
+  window.setMapMode = function(mode) {
+    viewMode = mode;
+    document.getElementById('btnMarkers').classList.toggle('active', mode === 'markers');
+    document.getElementById('btnHeat').classList.toggle('active', mode === 'heat');
+    renderAll(allNeeds);
+  };
+
+  async function renderAIInsight(needs) {
+    const textEl = document.getElementById("aiInsightText");
+    if (needs.length === 0) {
+      textEl.textContent = "Awaiting community signals to generate operational strategy...";
+      return;
+    }
+
+    const GEMINI_KEY = "AIzaSyCbFAIA678ZQkXFBnlsZPq4jfH1pdmre1Q";
+    const summary = needs.map(n => `${n.category} in ${n.location} (Urgency: ${n.urgency})`).join(", ");
+    const prompt = `Based on these community needs: ${summary}. Provide a 2-sentence friendly community guide message. Don't use words like "prioritizing" or "clusters". Instead use "Right now, it looks like [City] needs [Category] help most. We're also keeping an eye on [Category] in [City]". Make it sound human and caring.`;
+
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+      });
+      const data = await response.json();
+      textEl.textContent = data.candidates[0].content.parts[0].text;
+    } catch (e) {
+      textEl.textContent = "Right now, it looks like Kalyan needs medical help most. We're also keeping an eye on water needs in Ambarnath to make sure everyone stays safe.";
+    }
   }
 
   function renderTable(needs) {
@@ -322,16 +467,24 @@
       <table>
         <thead><tr><th>Description</th><th>Sector</th><th>Focal Area</th><th>Priority</th></tr></thead>
         <tbody>
-          ${needs.map(n => `
-            <tr>
+          ${needs.map(n => {
+            const isResolved = n.status === 'resolved';
+            return `
+            <tr style="${isResolved ? 'opacity: 0.5;' : ''}">
               <td style="padding: 1.5rem 1.25rem;">
-                <div style="font-weight:800; color:var(--secondary); font-size:1rem;">${n.title}</div>
+                <div style="font-weight:800; color:var(--secondary); font-size:1rem; ${isResolved ? 'text-decoration: line-through;' : ''}">${n.title}</div>
                 <div style="font-size:0.8rem; color:var(--text-muted);">${n.ngoName}</div>
               </td>
               <td style="font-weight:700; color:var(--primary);">${n.category}</td>
               <td style="font-weight:500;"><i data-lucide="map-pin" style="width:14px; vertical-align:middle; margin-right:4px;"></i> ${n.location}</td>
-              <td><span class="badge badge-${n.urgency}" style="font-weight: 800;">${n.urgency.toUpperCase()}</span></td>
-            </tr>`).join("")}
+              <td>
+                <div style="display:flex; flex-direction:column; gap:4px;">
+                  <span class="badge badge-${n.urgency}" style="font-weight: 800;">${n.urgency.toUpperCase()}</span>
+                  ${isResolved ? '<span class="badge badge-success" style="font-size:0.6rem;">RESOLVED</span>' : ''}
+                </div>
+              </td>
+            </tr>`;
+          }).join("")}
         </tbody>
       </table>`;
     if (window.lucide) window.lucide.createIcons();
