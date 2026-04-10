@@ -1,64 +1,67 @@
 # 🤝 VolunteerBridge
-**Connecting Local Hearts to Local Needs**
+**Connecting Community Needs with Neighbor Skills**
 
-> **Built for the Google Solution Challenge 2026** — Transforming community coordination into a smart, AI-driven experience.
-
----
-
-## 📌 The Quick Pitch
-**The Problem:** Local NGOs struggle to find specific skills quickly during urgent needs, while neighbors want to help but don't know where to start.  
-**The Solution:** A unified "Smart Community" platform that maps NGO requirements to volunteer skills using real-time data and AI matching.
+> **Technical Submission: Google Solution Challenge 2026** — An intelligent community coordination platform powered by real-time data and generative AI.
 
 ---
 
-## ⚖️ Judges' Cheat Sheet
-| Criteria | My Implementation |
+## 📌 Project Overview
+**Problem Statement:** Non-Profit Organizations (NGOs) often face critical delays in identifying specialized skills during urgent needs, while community members lack a streamlined channel to offer their expertise.
+**Solution:** VolunteerBridge provides a centralized "Smart Community" infrastructure that synchronizes NGO requirements with volunteer capabilities using real-time synchronization and advanced AI matching.
+
+---
+
+## ⚖️ Project Evaluation Overview
+| Component | Implementation Details |
 | :--- | :--- |
-| **Google Tech** | **Firebase Firestore** (Real-time DB) & GCP Infrastructure |
-| **Technical Merit** | **AI Matching Engine** (Anthropic Claude API) + **Chart.js** Analytics |
-| **Innovation** | Predicting community needs based on real-time urgency trends |
-| **UN SDGs** | Addressing **Goal 11** (Sustainable Cities) & **Goal 17** (Partnerships) |
+| **Google Cloud Tech** | **Firebase Firestore** (Real-time Database) & GCP Cloud Infrastructure |
+| **Artificial Intelligence** | **Google Gemini 2.0 Flash** (Intelligent Match Ranking) |
+| **Data Visualization** | **Chart.js** (Impact Analytics & Urgency Trends) |
+| **SDG Alignment** | **Goal 11** (Sustainable Cities) & **Goal 17** (Partnerships for the Goals) |
 
 ---
 
-## 🛠️ How it Works (The Bridge Workflow)
-1.  **Report (NGO):** NGOs post missions in the **Helping Hub**.
-2.  **Analyze (System):** Data is stored in **Firestore** and visualized on the **Community Map**.
-3.  **Bridge (AI):** The **Smart Match** engine ranks the best volunteers for the specific job.
+## 🛠️ Operational Workflow (The Bridge Model)
+1.  **Requirement Reporting (NGO):** Mission-critical needs are logged via the **Helping Hub**.
+2.  **Data Analysis (System):** Records are persisted in **Firestore** and analyzed via the **Community Map** dashboard.
+3.  **Intelligent Matching (AI):** The **Smart Match** engine utilizes Gemini AI to rank and recommend the most qualified volunteers.
 
 ---
 
-## 📂 Project Structure (Simple Guide)
-- 🏠 `index.html` → **The Welcome Mat**: Live stats and project vision.
-- 🏢 `ngo.html` → **Helping Hub**: Where needs are reported.
-- 👥 `volunteer.html` → **Bridge Builders**: Where neighbors join the movement.
-- 📊 `dashboard.html` → **Community Map**: Real-time impact & urgency charts.
-- 🧠 `match.html` → **Smart Match**: Advanced AI volunteer ranking.
+## 📂 Project Structure
+- 🏠 `index.html` → **Landing Portal**: Project mission and real-time community statistics.
+- 🏢 `ngo.html` → **Helping Hub**: Administrative interface for mission reporting.
+- 👥 `volunteer.html` → **Partner Portal**: Skill-based registration for community members.
+- 📊 `dashboard.html` → **Community Map**: Real-time analytical dashboard using Chart.js.
+- 🧠 `match.html` → **Smart Match**: Gemini AI integration for strategic resource allocation.
 
 ---
 
-## ⚙️ 2-Minute Setup
+## ⚙️ Deployment & Setup
 
-### 1. Database (Google Firebase)
-1.  Create a Firestore DB in "Test Mode" via the [Firebase Console](https://console.firebase.google.com).
-2.  Replace the `firebaseConfig` block in all 5 HTML files with your project keys.
+### 1. Database Integration (Firebase)
+1.  Configure a Firestore instance in the [Firebase Console](https://console.firebase.google.com).
+2.  Update the `firebaseConfig` object across the application files with your project credentials.
 
-### 2. AI Intelligence
-1.  Add your Anthropic API Key to the `headers` section in `match.html`.
+### 2. AI Intelligence (Gemini API)
+1.  Obtain an API Key from the [Google AI Studio](https://aistudio.google.com/).
+2.  Insert the key into the `GEMINI_KEY` constant within the script section of `match.html`.
 
-### 3. Run It
-1.  Open `index.html` with VS Code **Live Server** to see it in action.
-
----
-
-## 🌟 Tech Stack
-- **Database:** Firebase Firestore (Google)
-- **AI:** Claude-3 (Anthropic API)
-- **Frontend:** HTML5, CSS3, JS (Vanilla)
-- **Visualization:** Chart.js
-- **Icons:** Lucide-icons
+### 3. Local Execution
+1.  Launch the application using a local development server (e.g., VS Code Live Server).
+2.  Access the interface at `http://127.0.0.1:5500`.
 
 ---
-**Connecting hearts, crossing bridges. Together.**
+
+## 🌟 Technical Stack
+- **Database:** Google Firebase Firestore
+- **Intelligence:** Google Gemini 2.0 Flash API
+- **Frontend Architecture:** Semantic HTML5, CSS3, JavaScript (ES6+)
+- **Data Visualization:** Chart.js
+- **Iconography:** Lucide-icons
+
+---
+**Connecting hearts, crossing bridges. Collaborative Community Building.**
+
 
 
