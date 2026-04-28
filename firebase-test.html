@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Firestore Debug | VolunteerBridge</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: #1e293b;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    h1 { color: #10b981; }
+    p { color: #94a3b8; }
+    .status {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #0f172a;
+      border-radius: 0.5rem;
+      font-family: monospace;
+      max-width: 400px;
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Firestore Debug</h1>
+    <p>Check the console (F12) to see results.</p>
+    <div class="status" id="status">Initializing...</div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBmMZdC9WgVCnXAQb6Jvx_n_JmEHE3z2U8",
+      authDomain: "volunteerbridge-5a97c.firebaseapp.com",
+      projectId: "volunteerbridge-5a97c",
+      storageBucket: "volunteerbridge-5a97c.firebasestorage.app",
+      messagingSenderId: "510303137686",
+      appId: "1:510303137686:web:fe88bed9dd8e1b76a477b7",
+      measurementId: "G-LDWK1Z2GTB"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    // Initialize Firestore (THIS IS GCP USAGE 🔥)
+    const db = getFirestore(app);
+
+    const statusEl = document.getElementById('status');
+
+    // ✅ Example: Add NGO Requirement
+    async function addRequirement() {
+      try {
+        statusEl.textContent = "Writing to Firestore...";
+        const docRef = await addDoc(collection(db, "requirements"), {
+          title: "Need Doctor",
+          urgency: "High",
+          location: "Mumbai",
+          timestamp: new Date()
+        });
+        console.log("Document written with ID: ", docRef.id);
+        statusEl.textContent = "Doc Written ID: " + docRef.id;
+      } catch (e) {
+        console.error("Error adding document: ", e);
+        statusEl.textContent = "Error: " + e.message;
+      }
+    }
+
+    // ✅ Example: Fetch Data
+    async function getRequirements() {
+      try {
+        const querySnapshot = await getDocs(collection(db, "requirements"));
+        console.log("Current Requirements:");
+        querySnapshot.forEach((doc) => {
+          console.log(doc.id, " => ", doc.data());
+        });
+      } catch (e) {
+        console.error("Error fetching documents: ", e);
+      }
+    }
+
+    // Call functions (for testing)
+    addRequirement().then(() => {
+      getRequirements();
+    });
+
+  </script>
+</body>
+</html>

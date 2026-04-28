@@ -1,23 +1,23 @@
 /* VolunteerBridge Universal Design System 2026 */
 :root {
-  /* Dynamic Color Palette */
-  --primary: #15803d; /* Rich Forest Green */
-  --primary-dark: #14532d;
+  /* Dynamic Color Palette — Aligned with new Bridge Brand */
+  --primary: #22c55e; /* Vibrant Lime Green */
+  --primary-dark: #16a34a;
   --primary-light: #f0fdf4;
-  --primary-glow: rgba(22, 163, 74, 0.15);
+  --primary-glow: rgba(34, 197, 94, 0.15);
   
-  --secondary: #1e293b; /* Slate Deep Blue */
+  --secondary: #0ea5e9; /* Azure/Cyan Blue */
   --accent: #f59e0b; /* Amber */
   --danger: #ef4444; /* Rose Red */
   
-  --text-main: #0f172a;
+  --text-main: #1e293b; /* Deep Slate */
   --text-muted: #64748b;
   --text-inverse: #ffffff;
   
   --bg-main: #f8fafc;
   --bg-alt: #f1f5f9;
-  --bg-card: rgba(255, 255, 255, 0.85);
-  --border: rgba(203, 213, 225, 0.5);
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --border: rgba(148, 163, 184, 0.2);
   
   /* Radii & Shadows */
   --radius-sm: 12px;
@@ -36,7 +36,7 @@
   --bg-table: #ffffff;
   --bg-th: #f8fafc;
   
-  --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   --max-width: 1400px;
 }
 
@@ -46,7 +46,7 @@
   --primary-light: rgba(34, 197, 94, 0.1);
   --primary-glow: rgba(34, 197, 94, 0.3);
   
-  --secondary: #f8fafc;
+  --secondary: #38bdf8;
   --accent: #fbbf24;
   --danger: #f87171;
   
@@ -60,9 +60,9 @@
   --bg-input: #0f172a;
   --bg-table: #0f172a;
   --bg-th: #1e293b;
-  --border: rgba(51, 65, 85, 0.6);
+  --border: rgba(255, 255, 255, 0.05);
   
-  --glass-bg: rgba(2, 6, 23, 0.7);
+  --glass-bg: rgba(15, 23, 42, 0.5);
   --glass-border: rgba(255, 255, 255, 0.08);
   --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
 }
@@ -99,15 +99,23 @@ a { text-decoration: none; color: inherit; transition: var(--transition); }
 
 /* Navigation Standard */
 nav {
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  border-bottom: 1px solid var(--border);
+  background: transparent;
+  border-bottom: 1px solid transparent;
   position: sticky;
   top: 0;
   z-index: 1000;
-  height: 88px;
+  height: 80px;
   display: flex;
   align-items: center;
+  transition: var(--transition);
+}
+
+nav.scrolled {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  border-bottom: 1px solid var(--border);
+  height: 72px;
+  box-shadow: var(--shadow-md);
 }
 
 nav .container {
@@ -131,16 +139,29 @@ nav .container {
 .nav-brand span { color: var(--text-main); }
 .nav-brand .text-primary { color: var(--primary); font-weight: 400; }
 
-.logo-img {
-  height: 48px;
+.logo-svg {
+  height: 64px;
   width: auto;
-  object-fit: contain;
   transition: var(--transition);
-  filter: drop-shadow(0 4px 6px rgba(21, 128, 61, 0.1));
+  filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.2));
+  margin-right: 8px;
 }
 
-.nav-brand:hover { transform: scale(1.02); }
-.nav-brand:hover .logo-img { transform: rotate(-8deg) scale(1.1); }
+.nav-brand {
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  font-size: 2.25rem;
+  font-family: 'DM Serif Display', serif;
+  color: var(--secondary);
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.nav-brand:hover .logo-svg { transform: scale(1.1); filter: drop-shadow(0 0 20px var(--primary-glow)); }
+
+.nav-brand:hover { transform: scale(1.01); }
+.nav-brand:hover .logo-img { transform: scale(1.1); filter: drop-shadow(0 6px 15px rgba(34, 197, 94, 0.3)); }
 
 .nav-links {
   display: flex;

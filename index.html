@@ -16,9 +16,14 @@
     /* Hero Image Override */
     .hero {
       position: relative;
-      padding: 10rem 0 12rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       text-align: center;
-      background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.3)), url('assets/hero-bg.png') center/cover no-repeat;
+      padding: 100px 2rem;
+      background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.5)), url('assets/hero-bg.png') no-repeat center center/cover;
       color: white;
       overflow: hidden;
     }
@@ -39,7 +44,7 @@
     }
     
     .hero h1 { font-size: clamp(3rem, 8vw, 5.5rem); margin-bottom: 1.5rem; color: white; }
-    .hero h1 span { color: #4ade80; }
+    .hero h1 span { color: var(--primary); }
     .hero p { color: rgba(255, 255, 255, 0.9); font-size: 1.4rem; max-width: 750px; margin: 0 auto 3.5rem; line-height: 1.5; text-wrap: balance; }
     
     .hero-cta { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
@@ -99,8 +104,29 @@
 <nav>
   <div class="container">
     <a class="nav-brand" href="index.html">
-      <img src="assets/logo.png" alt="VolunteerBridge" class="logo-img">
-      Volunteer<span class="text-primary">Bridge</span>
+      <svg class="logo-svg" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="logoGrad" x1="0" y1="0" x2="200" y2="0">
+            <stop offset="0%" stop-color="var(--secondary)" />
+            <stop offset="100%" stop-color="var(--primary)" />
+          </linearGradient>
+        </defs>
+        <!-- Arches -->
+        <path d="M10 100 C 10 40, 190 40, 190 100" stroke="url(#logoGrad)" stroke-width="12" stroke-linecap="round" />
+        <path d="M35 100 C 35 65, 165 65, 165 100" stroke="url(#logoGrad)" stroke-width="6" stroke-linecap="round" opacity="0.5" />
+        <!-- Vertical Braces -->
+        <line x1="60" y1="65" x2="60" y2="100" stroke="url(#logoGrad)" stroke-width="3" opacity="0.3" />
+        <line x1="100" y1="55" x2="100" y2="100" stroke="url(#logoGrad)" stroke-width="3" opacity="0.3" />
+        <line x1="140" y1="65" x2="140" y2="100" stroke="url(#logoGrad)" stroke-width="3" opacity="0.3" />
+        <!-- People Silhouettes -->
+        <circle cx="45" cy="55" r="8" fill="var(--secondary)" /> <!-- NGO -->
+        <circle cx="155" cy="55" r="8" fill="var(--primary)" /> <!-- Volunteer -->
+        <!-- Connection Nodes -->
+        <circle cx="100" cy="45" r="4" fill="url(#logoGrad)" />
+        <line x1="45" y1="55" x2="100" y2="45" stroke="var(--secondary)" stroke-width="1" opacity="0.4" />
+        <line x1="155" y1="55" x2="100" y2="45" stroke="var(--primary)" stroke-width="1" opacity="0.4" />
+      </svg>
+      <span style="color:var(--secondary)">Volunteer</span><span class="text-primary">Bridge</span>
     </a>
     <div class="nav-links" id="navLinks">
       <a href="index.html" class="active">Home</a>
@@ -125,8 +151,8 @@
     <div class="hero-badge">
       <i data-lucide="award" style="width:18px"></i> Google Solution Challenge 2026 Nominee
     </div>
-    <h1>Building Bridges,<br/><span>Strengthening Community.</span></h1>
-    <p>Where local needs find local hearts. We connect your unique skills with the neighbors who need them most—building a smarter community together.</p>
+    <h1>Building Bridges,<br/><span>Building Community.</span></h1>
+    <p>Where local needs find local hearts. We're on a mission to connect neighbors, share skills, and build a stronger world together—one bridge at a time.</p>
     <div class="hero-cta">
       <a href="ngo.html" class="btn btn-primary"><i data-lucide="plus-circle" style="width:20px"></i> Report a Need</a>
       <a href="volunteer.html" class="btn btn-secondary" style="backdrop-filter: blur(10px); background: rgba(255,255,255,0.2); border: 2px solid white; color: white;">Join as Volunteer</a>
@@ -156,8 +182,8 @@
 <section class="section section-alt">
   <div class="container">
     <div style="text-align: center; margin-bottom: 6rem;">
-      <h2 style="font-size: 3.5rem; margin-bottom: 1.5rem;">One Bridge, Infinite Impact</h2>
-      <p style="color: var(--text-muted); font-size: 1.35rem; max-width: 700px; margin: 0 auto;">We don't just find help—we build lasting connections that make our community smarter and safer.</p>
+      <h2 style="font-size: 3rem; margin-bottom: 1.5rem;">"This isn't just an app—it's how we <span style='color:var(--primary)'>look out for each other</span> when it matters most."</h2>
+      <p style="font-size: 1.1rem; opacity: 0.8; font-weight: 700;">— COMMUNITY COORDINATOR</p>
     </div>
     <div class="grid grid-3">
       <div class="card step-card ani-fade-up" style="animation-delay: 0.1s;">
@@ -187,7 +213,7 @@
           <i data-lucide="building" style="width: 28px;"></i>
         </div>
         <h3 style="color: var(--primary); font-family: 'DM Serif Display', serif; font-size: 2.25rem; margin-bottom: 1rem;">For NGOs</h3>
-        <p style="font-size: 1.15rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 2rem;">Access high-fidelity reporting tools and claim the resources your mission requires to succeed.</p>
+        <p style="font-size: 1.15rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 2rem;">Post what your community needs and find the right people to help you get it done.</p>
         <a href="ngo.html" class="portal-link" style="font-weight: 800; display: inline-flex; align-items: center; gap: 8px;">NGO Access <i data-lucide="arrow-right" style="width:20px"></i></a>
       </div>
       <div class="card portal-card premium-card ani-fade-up" style="animation-delay: 0.1s;">
@@ -195,7 +221,7 @@
           <i data-lucide="user-plus" style="width: 28px;"></i>
         </div>
         <h3 style="font-family: 'DM Serif Display', serif; color: var(--secondary); font-size: 2.25rem; margin-bottom: 1rem;">For You</h3>
-        <p style="font-size: 1.15rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 2rem;">Your talent is a resource. We'll connect you with opportunities where your specific skills can save the day.</p>
+        <p style="font-size: 1.15rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 2rem;">Your skills can change lives. We'll find the perfect place for you to lend a hand.</p>
         <a href="volunteer.html" class="portal-link" style="color: var(--primary); font-weight: 800; display: inline-flex; align-items: center; gap: 8px;">Start Helping <i data-lucide="arrow-right" style="width:20px"></i></a>
       </div>
     </div>
@@ -238,24 +264,16 @@
 </footer>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBmMZdC9WgVCnXAQb6Jvx_n_JmEHE3z2U8",
-    authDomain: "volunteerbridge-5a97c.firebaseapp.com",
-    projectId: "volunteerbridge-5a97c",
-    storageBucket: "volunteerbridge-5a97c.firebasestorage.app",
-    messagingSenderId: "510303137686",
-    appId: "1:510303137686:web:00b136908afa7b48a477b7"
-  };
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+  import { firebaseConfig } from "./firebase-config.js";
 
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
 
   async function loadHomeStats() {
     try {
-      const needs = await getDocs(collection(db, "needs"));
+      const needs = await getDocs(collection(db, "requirements"));
       const vols = await getDocs(collection(db, "volunteers"));
       
       const uniqueLocs = new Set();
@@ -302,6 +320,13 @@
       };
     }
   })();
+
+  // Scroll Effect
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (window.scrollY > 20) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
 </script>
 
 </body>

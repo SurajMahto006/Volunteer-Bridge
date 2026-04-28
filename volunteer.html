@@ -24,7 +24,17 @@
       border-radius: 8px; padding: 0.5rem 0.85rem; font-size: 0.9rem; font-weight: 700;
     }
     .skill-tag button { background: none; border: none; cursor: pointer; color: var(--primary); padding: 0; font-size: 1.25rem; line-height: 1; display: flex; }
-    #skillInput { border: none; outline: none; background: transparent; font-size: 1rem; flex: 1; min-width: 150px; }
+    #skillInput { border: none; outline: none; background: transparent; font-size: 1rem; flex: 1; min-width: 150px; color: var(--text-main); font-family: inherit; }
+    #skillInput::placeholder { color: var(--text-muted); opacity: 0.6; }
+
+    .skill-suggestions { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 8px; }
+    .suggestion-tag { 
+      background: var(--bg-alt); color: var(--text-muted); 
+      padding: 0.4rem 0.8rem; border-radius: 8px; font-size: 0.75rem; 
+      font-weight: 700; cursor: pointer; transition: var(--transition);
+      border: 1px solid var(--border);
+    }
+    .suggestion-tag:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
 
     .availability-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
     .avail-option input { display: none; }
@@ -66,8 +76,13 @@
 <nav>
   <div class="container">
     <a class="nav-brand" href="index.html">
-      <img src="assets/logo.png" alt="VolunteerBridge" class="logo-img">
-      Volunteer<span class="text-primary">Bridge</span>
+      <svg class="logo-svg" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="logoGradV" x1="0" y1="0" x2="200" y2="0"><stop offset="0%" stop-color="var(--secondary)" /><stop offset="100%" stop-color="var(--primary)" /></linearGradient></defs>
+        <path d="M10 100 C 10 40, 190 40, 190 100" stroke="url(#logoGradV)" stroke-width="12" stroke-linecap="round" />
+        <path d="M35 100 C 35 65, 165 65, 165 100" stroke="url(#logoGradV)" stroke-width="6" stroke-linecap="round" opacity="0.5" />
+        <circle cx="45" cy="55" r="8" fill="var(--secondary)" /><circle cx="155" cy="55" r="8" fill="var(--primary)" /><circle cx="100" cy="45" r="4" fill="url(#logoGradV)" />
+      </svg>
+      <span style="color:var(--secondary)">Volunteer</span><span class="text-primary">Bridge</span>
     </a>
     <div class="nav-links" id="navLinks">
       <a href="index.html">Home</a>
@@ -89,8 +104,8 @@
 
 <div class="container">
   <header class="header-box ani-fade-up">
-    <h1>Join the Force</h1>
-    <p>Become a certified Impact Partner. Your expertise is a strategic asset — deploy it where it matters most.</p>
+    <h1>Your Skills are Needed</h1>
+    <p>Join your neighbors and help build a better world. Your time and skills can change lives.</p>
   </header>
 
   <div class="card ani-fade-up" style="max-width: 900px; margin: 0 auto 5rem; animation-delay: 0.1s;">
@@ -121,7 +136,17 @@
       <div class="form-group">
         <label>Core Competencies <span style="color:var(--danger)">*</span> <span style="text-transform:none; opacity:0.5; margin-left:8px; font-weight:400;">(Press Enter to add tags)</span></label>
         <div class="skills-wrapper" id="skillsWrapper" onclick="document.getElementById('skillInput').focus()">
-          <input type="text" id="skillInput" placeholder="e.g. Healthcare, Logistics, Rescue..." />
+          <input type="text" id="skillInput" placeholder="Add a skill..." />
+        </div>
+        <div class="skill-suggestions" id="skillSuggestions">
+          <span class="suggestion-tag" onclick="addSuggestedSkill('Healthcare')">Healthcare</span>
+          <span class="suggestion-tag" onclick="addSuggestedSkill('Logistics')">Logistics</span>
+          <span class="suggestion-tag" onclick="addSuggestedSkill('First Aid')">First Aid</span>
+          <span class="suggestion-tag" onclick="addSuggestedSkill('Education')">Education</span>
+          <span class="suggestion-tag" onclick="addSuggestedSkill('Cooking')">Cooking</span>
+          <span class="suggestion-tag" onclick="addSuggestedSkill('Tech Support')">Tech Support</span>
+          <span class="suggestion-tag" onclick="addSuggestedSkill('Counseling')">Counseling</span>
+          <span class="suggestion-tag" onclick="addSuggestedSkill('Translation')">Translation</span>
         </div>
         <input type="hidden" id="skillsHidden" />
       </div>
@@ -191,17 +216,9 @@
 </footer>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBmMZdC9WgVCnXAQb6Jvx_n_JmEHE3z2U8",
-    authDomain: "volunteerbridge-5a97c.firebaseapp.com",
-    projectId: "volunteerbridge-5a97c",
-    storageBucket: "volunteerbridge-5a97c.firebasestorage.app",
-    messagingSenderId: "510303137686",
-    appId: "1:510303137686:web:00b136908afa7b48a477b7"
-  };
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+  import { firebaseConfig } from "./firebase-config.js";
 
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
@@ -241,6 +258,10 @@
       e.target.value = "";
     }
   });
+
+  window.addSuggestedSkill = (val) => {
+    if (val && !skills.includes(val)) { skills.push(val); renderTags(); }
+  };
 
   async function loadVolunteers() {
     const container = document.getElementById("volunteersContainer");
@@ -353,6 +374,13 @@
       };
     }
   })();
+
+  // Scroll Effect
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (window.scrollY > 20) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
 </script>
 
 </body>

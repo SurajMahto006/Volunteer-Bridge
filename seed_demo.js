@@ -66,16 +66,19 @@ const VOLUNTEERS = [
     { name: "Priya Sharma", skills: ["Translation (Hindi/English)", "Communication"], availability: ["Remote only"], location: "Mumbai", experience: 3, phone: "+91 9877788899", createdAt: new Date() },
     { name: "David Miller", skills: ["Warehouse Manager", "Retail"], availability: ["Full-time"], location: "Thane West", experience: 10, phone: "+91 9888899900", createdAt: new Date() },
     { name: "Anjali Gupta", skills: ["Software Developer", "Data Entry"], availability: ["Evenings", "Remote only"], location: "Kalyan", experience: 4, phone: "+91 9899900011", createdAt: new Date() },
-    { name: "Vikram Singh", skills: ["Plumbing", "Electrical"], availability: ["Weekends"], location: "Ambarnath", experience: 20, phone: "+91 9800011122", createdAt: new Date() }
+    { name: "Vikram Singh", skills: ["Plumbing", "Electrical"], availability: ["Weekends"], location: "Ambarnath", experience: 20, phone: "+91 9800011122", createdAt: new Date() },
+    { name: "Samira Khan", skills: ["Psychologist", "Crisis Counseling"], availability: ["Weekdays", "Evenings"], location: "Mumbai East", experience: 9, phone: "+91 9911122233", createdAt: new Date() },
+    { name: "Robert Chen", skills: ["Chef", "Mass Cooking", "Logistics"], availability: ["Full-time"], location: "Thane", experience: 15, phone: "+91 9922233344", createdAt: new Date() },
+    { name: "Fatima Bi", skills: ["Social Worker", "Child Care"], availability: ["Weekdays"], location: "Kalyan West", experience: 8, phone: "+91 9933344455", createdAt: new Date() }
 ];
 
 async function seed() {
     try {
-        await deleteCollection('needs');
+        await deleteCollection('requirements');
         await deleteCollection('volunteers');
         
-        console.log("Seeding Needs...");
-        for (const n of NEEDS) await addDoc('needs', n);
+        console.log("Seeding Requirements...");
+        for (const n of NEEDS) await addDoc('requirements', n);
         
         console.log("Seeding Volunteers...");
         for (const v of VOLUNTEERS) await addDoc('volunteers', v);

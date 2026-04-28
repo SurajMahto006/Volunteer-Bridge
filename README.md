@@ -21,6 +21,25 @@
 
 ---
 
+## 🚀 Project Flow (End-to-End)
+1.  **Landing Portal (`index.html`):** User arrives at the hosted platform, viewing project mission and real-time community statistics.
+2.  **NGO Requirement Reporting (`ngo.html`):** NGOs log critical needs (e.g., "Need Doctor") which are persisted in the Firestore `requirements` collection.
+3.  **Volunteer Registration (`volunteer.html`):** Community members register their skills, availability, and location, stored in the `volunteers` collection.
+4.  **AI Intelligence Matching (`match.html`):** The system fetches data from both Firestore collections and utilizes **Google Gemini** to analyze skills, proximity, and urgency to rank the best volunteer matches.
+5.  **Impact Analytics (`dashboard.html`):** Real-time data from Firestore is visualized using Chart.js to track requests, urgency trends, and volunteer availability.
+
+---
+
+## 🌐 Cloud Architecture (The Judge's View)
+```mermaid
+graph TD
+    User([User Browser]) --> FH[Firebase Hosting]
+    FH --> FS[(Firestore Database)]
+    FS --> GS[Gemini AI Engine]
+    GS --> User
+    FS --> Dashboard[Impact Dashboard]
+```
+
 ## 🛠️ Operational Workflow (The Bridge Model)
 1.  **Requirement Reporting (NGO):** Mission-critical needs are logged via the **Helping Hub**.
 2.  **Data Analysis (System):** Records are persisted in **Firestore** and analyzed via the **Community Map** dashboard.
@@ -41,7 +60,8 @@
 
 ### 1. Database Integration (Firebase)
 1.  Configure a Firestore instance in the [Firebase Console](https://console.firebase.google.com).
-2.  Update the `firebaseConfig` object across the application files with your project credentials.
+2.  Update the centralized `firebase-config.js` file with your project credentials. This configuration is used across the entire application.
+3.  Check [gcp-usage.html](file:///c:/Users/Lenovo/OneDrive/Desktop/Volunteer-Bridge/gcp-usage.html) for a live demonstration of GCP Firestore integration.
 
 ### 2. AI Intelligence (Gemini API)
 1.  Obtain an API Key from the [Google AI Studio](https://aistudio.google.com/).

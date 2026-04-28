@@ -1,17 +1,8 @@
 import { initializeApp }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
 import { getFirestore, collection, onSnapshot, getDocs, orderBy, query }
-  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-// ── FIREBASE CONFIG (Copied from dashboard.html) ──
-const firebaseConfig = {
-  apiKey:            "AIzaSyBmMZdC9WgVCnXAQb6Jvx_n_JmEHE3z2U8",
-  authDomain:        "volunteerbridge-5a97c.firebaseapp.com",
-  projectId:         "volunteerbridge-5a97c",
-  storageBucket:     "volunteerbridge-5a97c.firebasestorage.app",
-  messagingSenderId: "510303137686",
-  appId:             "1:510303137686:web:00b136908afa7b48a477b7"
-};
+  from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
@@ -23,7 +14,7 @@ let doughnutInstance   = null;
 // ── REAL-TIME UPDATES ──
 // We use onSnapshot for a "Live" feel, perfect for a hackathon demo
 function initLiveFeed() {
-  const q = query(collection(db, "needs"), orderBy("createdAt", "desc"));
+  const q = query(collection(db, "requirements"), orderBy("createdAt", "desc"));
   
   onSnapshot(q, (snapshot) => {
     allNeeds = [];
